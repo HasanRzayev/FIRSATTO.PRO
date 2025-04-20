@@ -1,0 +1,11 @@
+# Aşağıdakı sətir bütün axtarış motorlarının saytınızı indeksləşdirməsinə icazə verir
+User-agent: *
+Disallow: /private/
+
+# Yalnız Google botları üçün xüsusi bir qayda
+User-agent: Googlebot
+Disallow: /no-google/
+
+# Bütün robotlar üçün icazə verilən yeri göstərir
+User-agent: *
+Allow: /public/

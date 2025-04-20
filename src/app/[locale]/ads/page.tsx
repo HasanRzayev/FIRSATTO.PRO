@@ -169,13 +169,12 @@ export default function CreateAdPage() {
           required
         />
 
-        <textarea
-          placeholder="Description"
-          placeholder={t("detailsdescription")}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 w-full rounded"
-          required
-        />
+<textarea
+  placeholder={t("detailsdescription")}
+  onChange={(e) => setDescription(e.target.value)}
+  className="border p-2 w-full rounded"
+  required
+/>
 
         <input
           list="category-options"

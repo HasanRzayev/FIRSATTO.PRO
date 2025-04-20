@@ -5,6 +5,14 @@ import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+interface Profile {
+  full_name: string;
+  username: string;
+  bio: string;
+  location: string;
+  birth_date: string;
+  profile_picture?: string | null;
+}
 
 export default function SettingsPage() {
   const t = useTranslations();
@@ -12,7 +20,7 @@ export default function SettingsPage() {
   const router = useRouter();
 
   const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null); // Typed profile
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
@@ -135,7 +143,7 @@ export default function SettingsPage() {
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               value={profile.full_name || ""}
               onChange={(e) =>
-                setProfile((prev) => ({ ...prev, full_name: e.target.value }))
+                setProfile((prev) => prev ? { ...prev, full_name: e.target.value } : prev) // Proper type handling here
               }
             />
           </div>
@@ -147,7 +155,7 @@ export default function SettingsPage() {
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               value={profile.username || ""}
               onChange={(e) =>
-                setProfile((prev) => ({ ...prev, username: e.target.value }))
+                setProfile((prev) => prev ? { ...prev, username: e.target.value } : prev) // Proper type handling here
               }
             />
           </div>
@@ -158,7 +166,7 @@ export default function SettingsPage() {
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               value={profile.bio || ""}
               onChange={(e) =>
-                setProfile((prev) => ({ ...prev, bio: e.target.value }))
+                setProfile((prev) => prev ? { ...prev, bio: e.target.value } : prev) // Proper type handling here
               }
             />
           </div>
@@ -170,7 +178,7 @@ export default function SettingsPage() {
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               value={profile.location || ""}
               onChange={(e) =>
-                setProfile((prev) => ({ ...prev, location: e.target.value }))
+                setProfile((prev) => prev ? { ...prev, location: e.target.value } : prev) // Proper type handling here
               }
             />
           </div>
@@ -182,7 +190,7 @@ export default function SettingsPage() {
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               value={profile.birth_date || ""}
               onChange={(e) =>
-                setProfile((prev) => ({ ...prev, birth_date: e.target.value }))
+                setProfile((prev) => prev ? { ...prev, birth_date: e.target.value } : prev) // Proper type handling here
               }
             />
           </div>

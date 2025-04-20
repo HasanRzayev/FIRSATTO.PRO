@@ -5,10 +5,7 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
 // Use createClient to initialize Supabase
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL, // Your Supabase URL
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY // Your Supabase Anon Key
-);
+const supabase = createClient(); // No arguments needed, the URL and anon key will be handled in your createClient function
 
 export default function Dashboard() {
   const [isMounted, setIsMounted] = useState(false); // Track mount status

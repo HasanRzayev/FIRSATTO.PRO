@@ -22,11 +22,8 @@ export async function POST(req: Request) {
     if (!adId) {
       return NextResponse.json({ message: "Ad ID is missing" }, { status: 400 });
     }
-    
-    // Eğer tüm alanlar mevcutsa işlemi devam ettirebilirsiniz
-    
 
-    const supabase = createClient();
+    const supabase = await createClient(); // Ensure this is awaited
 
     // Check if the user exists in the user_profiles table
     const { data: userData, error: userError } = await supabase

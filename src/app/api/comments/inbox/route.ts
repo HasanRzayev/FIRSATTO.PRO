@@ -1,15 +1,38 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
+// Define the Comment type
+interface Comment {
+  id: string;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+  user_profiles: {
+    username: string;
+    profile_picture: string;
+  }[];  // Keep it as an array since Supabase returns an array
+  ad_id: string;
+  parent_comment_id: string | null;
+  user_id: string;
+  user_ads: {
+    title: string;
+  }[]; 
+  parent_comment: {
+    user_id: string;
+  }[];  // This might also be an array, depending on your schema
+}
+
 export async function GET(req: Request) {
-  const supabase = createClient();
+  const supabase = await createClient();  // Await the creation of the Supabase client
+
+  // Get user info
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
     return NextResponse.json({ error: error?.message || "User not found" }, { status: 401 });
   }
 
-  // 1. User-ə aid bütün commentləri tap
+  // 1. User's comments
   const { data: userComments, error: userCommentsError } = await supabase
     .from("comments")
     .select("id")
@@ -22,7 +45,7 @@ export async function GET(req: Request) {
   const userCommentIds = userComments.map(c => c.id);
   if (userCommentIds.length === 0) return NextResponse.json([]);
 
-  // 2. Bu commentlərə yazılmış cavabları (1-ci səviyyə reply) tap
+  // 2. First-level replies
   const { data: firstLevelReplies, error: firstLevelError } = await supabase
     .from("comments")
     .select(`
@@ -40,10 +63,18 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: firstLevelError.message }, { status: 500 });
   }
 
+  // Handle user_profiles as an array and extract the first profile
+  firstLevelReplies.forEach(reply => {
+    if (reply.user_profiles && reply.user_profiles.length > 0) {
+      const firstProfile = reply.user_profiles[0];
+      reply.user_profiles = [firstProfile];
+    }
+  });
+
   const firstLevelReplyIds = firstLevelReplies.map(r => r.id);
 
-  // 3. Əgər 1-ci səviyyə reply-lar varsa, onlara yazılmış cavabları (2-ci səviyyə) tap
-  let secondLevelReplies = [];
+  // 3. Second-level replies if first-level replies exist
+  let secondLevelReplies: Comment[] = [];
   if (firstLevelReplyIds.length > 0) {
     const { data: secondReplies, error: secondLevelError } = await supabase
       .from("comments")
@@ -62,22 +93,28 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: secondLevelError.message }, { status: 500 });
     }
 
+    // Handle user_profiles as an array and extract the first profile
+    secondReplies.forEach(reply => {
+      if (reply.user_profiles && reply.user_profiles.length > 0) {
+        const firstProfile = reply.user_profiles[0];
+        reply.user_profiles = [firstProfile];
+      }
+    });
+
     secondLevelReplies = secondReplies;
   }
 
-  // 4. Bütün reply-ləri birləşdirib qaytar
+  // 4. Combine all replies and sort them by created_at
   const allReplies = [...firstLevelReplies, ...secondLevelReplies];
-
-  // Tarixə görə sırala (əgər istəyirsənsə)
   allReplies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return NextResponse.json(allReplies);
 }
 
-
 export async function PATCH(req: Request) {
-  const supabase = createClient();
-  const { ids } = await req.json();
+  const supabase = await createClient();  // Await the creation of the Supabase client
+
+  const { ids } = await req.json();  // Expecting the ids of comments to update
 
   const { error } = await supabase
     .from("comments")
@@ -85,5 +122,6 @@ export async function PATCH(req: Request) {
     .in("id", ids);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
   return NextResponse.json({ success: true });
 }

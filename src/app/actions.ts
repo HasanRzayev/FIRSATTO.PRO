@@ -5,10 +5,11 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 
-const getLocale = () => {
-  const pathname = (headers().get('referer') || "").split('/');
+const getLocale = async () => {
+  const pathname = (await headers()).get('referer')?.split('/') || [];
   return pathname[3] || 'en'; // URL-nin ikinci hissəsindən locale alırıq (nümunə: /en/dashboard)
 }
+
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();

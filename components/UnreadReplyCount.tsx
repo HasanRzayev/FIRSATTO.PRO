@@ -7,7 +7,7 @@ export default function UnreadReplyCount() {
   const [count, setCount] = useState(0);
   const [unreadReplies, setUnreadReplies] = useState<any[]>([]);
   const pathname = usePathname()
-  const locale = pathname.split('/')[1] // URL-dən locale dəyərini götürürük
+  const locale = pathname?.split('/')[1] || 'en'; // URL-dən locale dəyərini götürürük
 
   useEffect(() => {
     const fetchReplies = async () => {

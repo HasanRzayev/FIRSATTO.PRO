@@ -5,8 +5,8 @@ import HeaderAuth from "@/components/header-auth";
 import Link from "next/link";
 import SaveIconButton from "@/components/SaveIconButton";
 import UnreadReplyCount from "@/components/UnreadReplyCount";
-import {LocaleSwitcher} from "@/components/LocaleSwitcher";
-import Navigation from "@/components/Navigation"; // Import the Navigation component
+import { LocaleSwitcher } from "@/components/LocaleSwitcher"; // Fixed import name
+import Navigation from "@/components/Navigation";
 import { dir } from "i18next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
@@ -21,7 +21,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = await params; // params-ı asinxron şəkildə gözləyirik
+  const { locale } = params; // Removed await since params is synchronous
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
@@ -41,9 +41,9 @@ export default async function LocaleLayout({
               <Link href={`/${locale}`} className="font-semibold text-white text-base">
                 FIRSATTO
               </Link>
-              <Navigation locale={locale} /> {/* Use the Navigation component here */}
+              <Navigation locale={locale} />
               <div className="flex items-center gap-4">
-                <LocaleSwitcher lang={locale} />
+                <LocaleSwitcher /> {/* Removed lang prop since component handles it internally */}
                 <UnreadReplyCount />
                 <SaveIconButton />
                 <HeaderAuth />

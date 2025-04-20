@@ -1,3 +1,4 @@
+// DetailPage.tsx
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -5,8 +6,18 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import CommentSection from "@/components/CommentSection";
 import ImageCarousel from "@/components/ImageCarousel";
+// src/types.ts
+ interface Comment {
+  id: string;
+  content: string;
+  timestamp: string;  // Make sure this is included
+  user: {
+    full_name: string;
+  };
+  replies?: Comment[];
+}
 
-interface Ad {
+ interface Ad {
   id: string;
   title: string;
   description: string;
@@ -21,17 +32,6 @@ interface Ad {
   };
   comments: Comment[];
 }
-
-interface Comment {
-  id: string;
-  content: string;
-  timestamp: string;
-  user: {
-    full_name: string;
-  };
-  replies?: Comment[];
-}
-
 async function getAdById(id: string): Promise<Ad | null> {
   try {
     const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/ads/${id}`;
@@ -64,6 +64,7 @@ const CommentArea = ({
   const [activeReplyCommentId, setActiveReplyCommentId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const t = useTranslations();
+  const [ad, setAd] = useState<Ad | null>(null);
 
   const handleReplyClick = (commentId: string) => {
     setActiveReplyCommentId(commentId);
@@ -207,7 +208,8 @@ const CommentArea = ({
 
 const DetailPage = () => {
   const pathname = usePathname();
-  const id = pathname.split("/").pop();
+  const id = pathname ? pathname.split("/").pop() : null;
+
   const [ad, setAd] = useState<Ad | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
@@ -248,7 +250,9 @@ const DetailPage = () => {
         <p><strong>{t("carddetailspostedby")}:</strong> {ad.user?.userName || "N/A"}</p>
       </div>
 
-      {ad.image_urls?.length > 0 && <ImageCarousel images={ad.image_urls} />}
+      {ad.image_urls?.length > 0 && (
+  <ImageCarousel images={ad.image_urls as string[]} />
+)}
 
       {ad.video_urls?.length > 0 && (
         <div className="mt-6">

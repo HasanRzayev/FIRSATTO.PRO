@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 const SaveIconButton = () => {
   const router = useRouter();
   const pathname = usePathname()
-  const locale = pathname.split('/')[1] // URL-dən locale dəyərini götürürük
+  const locale =pathname?.split('/')[1] || 'en'; // URL-dən locale dəyərini götürürük
   const handleClick = () => {
     router.push(`/${locale}/saved-ads`)
   };

@@ -1,4 +1,8 @@
-import { signUpAction } from "../../../actions";
+// app/sign-up/page.tsx
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { signUpAction } from "../../../../app/actions";
 import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
@@ -6,24 +10,15 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { SmtpMessage } from "../smtp-message";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
-import { useTranslations } from "next-intl";
 
-interface SignupProps {
-  searchParams?: Record<string, string>;
-  params: {
-    locale: string;
-  };
-}
+export default function Signup() {
+  const searchParams = useSearchParams();
 
-export default function Signup({ searchParams, params }: SignupProps) {
-  const t = useTranslations();
-  
   const message = {
-    success: searchParams?.success || undefined,
-    error: searchParams?.error || undefined,
+    success: searchParams?.get("success") || undefined,
+    error: searchParams?.get("error") || "", // Change undefined to an empty string for error
   };
-
-  const locale = params.locale;
+  
 
   if (message.success || message.error) {
     return (
@@ -38,70 +33,67 @@ export default function Signup({ searchParams, params }: SignupProps) {
   return (
     <main className="w-full min-h-screen flex items-center justify-center">
       <div className="w-full max-w-xl bg-white p-10 rounded-2xl shadow-2xl">
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
-          {t("signupheader")}
-        </h1>
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">Sign Up</h1>
         <p className="text-sm text-center text-gray-500 mb-6">
-          {t("signupquestion")}{" "}
-          <Link className="text-blue-500 font-medium underline" href={`/${locale}/sign-in`}>
-            {t("signupsignin")}
+          Already have an account?{" "}
+          <Link className="text-blue-500 font-medium underline" href="/sign-in">
+            Sign in
           </Link>
         </p>
-        <form className="flex flex-col gap-6" action={signUpAction}>
-        <div>
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-              {t("signupemail")}
-            </Label>
-            <Input
-              className="mt-2"
-              name="email"
-              placeholder={t("signupemailplaceholder")}
-              required
-            />
-          </div>
+        <form className="flex flex-col gap-6" action={signUpAction} method="POST">
+  <div>
+    <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+      Email
+    </Label>
+    <Input
+      className="mt-2"
+      name="email"
+      placeholder="you@example.com"
+      required
+    />
+  </div>
 
-          <div>
-            <Label htmlFor="full_name" className="text-sm font-medium text-gray-700">
-              {t("signupfullname")}
-            </Label>
-            <Input
-              className="mt-2"
-              name="full_name"
-              placeholder={t("signupfullnameplaceholder")}
-              required
-            />
-          </div>
+  <div>
+    <Label htmlFor="full_name" className="text-sm font-medium text-gray-700">
+      Full Name
+    </Label>
+    <Input
+      className="mt-2"
+      name="full_name"
+      placeholder="Your Full Name"
+      required
+    />
+  </div>
 
-          <div>
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-              {t("signuppassword")}
-            </Label>
-            <Input
-              className="mt-2"
-              type="password"
-              name="password"
-              placeholder={t("signuppasswordplaceholder")}
-              minLength={6}
-              required
-            />
-          </div>
+  <div>
+    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+      Password
+    </Label>
+    <Input
+      className="mt-2"
+      type="password"
+      name="password"
+      placeholder="Your password"
+      minLength={6}
+      required
+    />
+  </div>
 
-          <SubmitButton
-            pendingText={t("signuppending")}
-            formAction={signUpAction}
-            className="bg-blue-600 text-white hover:bg-blue-700 rounded-lg py-2"
-          >
-            {t("signupbutton")}
-          </SubmitButton>
+  <SubmitButton
+    pendingText="Signing up..."
+    formAction={signUpAction}
+    className="bg-blue-600 text-white hover:bg-blue-700 rounded-lg py-2"
+  >
+    Sign up
+  </SubmitButton>
+  <GoogleSignInButton label="Sign up with Google" />
 
-          <GoogleSignInButton label={t("signupgoogle")} />
+  {/* ❗ Sadəcə error varsa göstər */}
+  {message.error && (
+    <p className="text-sm text-red-600 font-medium text-center">{message.error}</p>
+  )}
+</form>
 
-          {message.error && (
-            <p className="text-sm text-red-600 font-medium text-center">
-              {message.error}
-            </p>
-          )}
-        </form>
       </div>
       <SmtpMessage />
     </main>

@@ -8,18 +8,34 @@ import { useTranslations } from 'next-intl';
 
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false });
 
+interface Reply {
+  id: string;
+  content?: string;
+  is_read?: boolean;
+  ad_id?: string;
+  parent_comment?: {
+    user_id?: string;
+  };
+  user_profiles?: {
+    username?: string;
+    profile_picture?: string;
+  };
+  user_ads?: {
+    title?: string;
+  };
+}
 
 export default function InboxPage() {
-  const [replies, setReplies] = useState<any[]>([]);
+  const [replies, setReplies] = useState<Reply[]>([]);
   const [loading, setLoading] = useState(true);
   const [replyTextMap, setReplyTextMap] = useState<{ [key: string]: string }>({});
   const [emojiPickerVisible, setEmojiPickerVisible] = useState<string | null>(null);
   const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  const [visibleReplies, setVisibleReplies] = useState<any[]>([]);
-  const [displayCount, setDisplayCount] = useState(4); // İlk 4 reply
+  const [visibleReplies, setVisibleReplies] = useState<Reply[]>([]);
+  const [displayCount, setDisplayCount] = useState(4);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredReplies, setFilteredReplies] = useState<any[]>([]);
+  const [filteredReplies, setFilteredReplies] = useState<Reply[]>([]);
   const translate = useTranslations();
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -49,8 +65,11 @@ export default function InboxPage() {
       const result = await res.json();
       const data = Array.isArray(result) ? result : result?.data ?? [];
 
-      // Dublikat reply.id-ləri sil
-      const uniqueReplies = Array.from(new Map(data.map(r => [r.id, r])).values());
+      // Remove duplicate reply.id's
+      const uniqueReplies = Array.from(
+        new Map(data.map((r: Reply) => [r.id, r])).values()
+      ) as Reply[]; // Burada tipi açıq şəkildə bildiririk
+      
       setReplies(uniqueReplies);
       setLoading(false);
 
@@ -71,7 +90,7 @@ export default function InboxPage() {
     setReplyTextMap((prev) => ({ ...prev, [commentId]: value }));
   };
 
-  const handleReplySubmit = async (reply: any) => {
+  const handleReplySubmit = async (reply: Reply) => {
     const { id: commentId, ad_id: adId } = reply;
     const text = replyTextMap[commentId];
 
@@ -89,7 +108,7 @@ export default function InboxPage() {
         },
         body: JSON.stringify({
           commentId,
-          userId: reply.parent_comment.user_id,
+          userId: reply.parent_comment?.user_id,
           text,
           adId,
         }),
@@ -119,7 +138,7 @@ export default function InboxPage() {
 
   const toggleInputVisibility = (commentId: string) => {
     setActiveReplyId((prev) => (prev === commentId ? null : commentId));
-    setEmojiPickerVisible(null); // emoji picker-i bağla
+    setEmojiPickerVisible(null);
   };
 
   useEffect(() => {
@@ -170,13 +189,12 @@ export default function InboxPage() {
         value={searchQuery}
         onChange={(e) => {
           setSearchQuery(e.target.value);
-          setDisplayCount(5); // Search zamanı yenidən 5-dən başla
+          setDisplayCount(5);
         }}
       />
 
       {visibleReplies.map((reply, index) => (
         <div key={`${reply.id}-${index}`} className="border p-4 rounded-lg shadow space-y-2 relative">
-          {/* Reply yazan user */}
           <div className="text-sm text-gray-600 flex items-center space-x-2">
             {reply.user_profiles?.profile_picture && (
               <img
@@ -197,15 +215,12 @@ export default function InboxPage() {
             :
           </div>
 
-          {/* Reply məzmunu */}
           <p className="text-md">{reply.content}</p>
 
-          {/* Elan başlığı */}
           <div className="text-sm text-gray-500">
             {translate("inboxadTitle")}: <Link href={`/details/${reply.ad_id}`} className="underline">{reply.user_ads?.title}</Link>
           </div>
 
-          {/* Reply Input Section */}
           <div className="pt-2 border-t">
             <div className="flex items-center space-x-2">
               <button

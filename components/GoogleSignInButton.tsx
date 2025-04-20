@@ -10,7 +10,7 @@ export default function GoogleSignInButton({ label = "Google ilə Daxil Ol" }: {
   const pathname = usePathname();
 
   // URL-dən locale dəyərini çıxarırıq (ilk hissə)
-  const locale = pathname.split('/')[1];
+  const locale = pathname?.split('/')[1] || 'en'; // default olaraq 'az' və ya istədiyin dəyəri ver
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({

@@ -6,10 +6,8 @@ import { useRouter } from "next/navigation";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+
+const supabase = createClient(); // No arguments needed, the URL and anon key will be handled in your createClient function
 
 export default function AdminAds() {
   const [ads, setAds] = useState<any[]>([]);

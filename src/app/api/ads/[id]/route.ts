@@ -1,10 +1,12 @@
 import { createClient } from "@/utils/supabase/server";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const supabase = createClient();
-  const adId = params.id;
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const supabase = await createClient();  // Await the client creation
 
-  if (!adId) {
+  // Await the promise to get the id
+  const { id } = await params;
+
+  if (!id) {
     return new Response(JSON.stringify({ error: "ID parametri mövcud deyil" }), { status: 400 });
   }
 
@@ -43,7 +45,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         )
       )
     `)
-    .eq("id", adId)
+    .eq("id", id)
     .single();
 
   if (error) {

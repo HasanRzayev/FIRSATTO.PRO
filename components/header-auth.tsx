@@ -20,7 +20,7 @@ export default function AuthButton() {
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const pathname = usePathname()
-  const locale = pathname.split('/')[1] // URL-dəki locale dəyərini alırıq
+  const locale = pathname?.split('/')[1] || 'az'; // default olaraq 'az' və ya istədiyin dəyəri ver
 
   useEffect(() => {
     const fetchUser = async () => {

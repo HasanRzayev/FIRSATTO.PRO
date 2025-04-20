@@ -5,13 +5,15 @@ import { createClient } from '@/utils/supabase/client'; // Make sure this is cor
 import { useRouter } from 'next/navigation';
 
 // Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL, // Your Supabase URL
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY // Your Supabase Anon Key
-);
+const supabase = createClient(); // No arguments needed, the URL and anon key will be handled in your createClient function
+type UserProfile = {
+  id: string;
+  full_name: string;
+  is_expert: boolean;
+};
 
 export default function AdminUsers() {
-  const [userProfiles, setUserProfiles] = useState([]);
+  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]); // Define the type here
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -25,7 +27,7 @@ export default function AdminUsers() {
       if (error) {
         alert('Error fetching user profiles.');
       } else {
-        setUserProfiles(data);
+        setUserProfiles(data); // Now TypeScript understands this
       }
 
       setIsLoading(false);
@@ -35,7 +37,7 @@ export default function AdminUsers() {
   }, []);
 
   // Function to delete a user profile
-  const deleteUser = async (id) => {
+  const deleteUser = async (id: string) => {
     const { error } = await supabase.from('user_profiles').delete().eq('id', id);
     if (error) {
       alert('Error deleting user profile.');
@@ -45,7 +47,7 @@ export default function AdminUsers() {
   };
 
   // Function to update the "is_expert" status of a user profile
-  const updateUser = async (id, isExpert) => {
+  const updateUser = async (id: string, isExpert: boolean) => {
     const { error } = await supabase
       .from('user_profiles')
       .update({ is_expert: !isExpert }) // Toggle expert status
