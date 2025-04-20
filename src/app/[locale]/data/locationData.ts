@@ -1,0 +1,60 @@
+export interface Location {
+    country: string;
+    cities: string[];
+  }
+  
+  const locationData: Location[] = [
+    { country: "USA", cities: ["New York", "Los Angeles", "Chicago", "Houston"] },
+    { country: "China", cities: ["Beijing", "Shanghai", "Shenzhen", "Guangzhou"] },
+    { country: "Germany", cities: ["Berlin", "Munich", "Frankfurt", "Hamburg"] },
+    { country: "Japan", cities: ["Tokyo", "Osaka", "Kyoto", "Nagoya"] },
+    { country: "United Kingdom", cities: ["London", "Manchester", "Birmingham", "Liverpool"] },
+    { country: "India", cities: ["Delhi", "Mumbai", "Bangalore", "Chennai"] },
+    { country: "Canada", cities: ["Toronto", "Vancouver", "Montreal", "Calgary"] },
+    { country: "Australia", cities: ["Sydney", "Melbourne", "Brisbane", "Perth"] },
+    { country: "France", cities: ["Paris", "Marseille", "Lyon", "Toulouse"] },
+    { country: "South Korea", cities: ["Seoul", "Busan", "Incheon", "Daegu"] },
+    { country: "Brazil", cities: ["Sao Paulo", "Rio de Janeiro", "Brasilia", "Salvador"] },
+    { country: "Italy", cities: ["Rome", "Milan", "Napoli", "Torino"] },
+    { country: "Russia", cities: ["Moscow", "Saint Petersburg", "Kazan", "Novosibirsk"] },
+    { country: "Spain", cities: ["Madrid", "Barcelona", "Valencia", "Seville"] },
+    { country: "Turkey", cities: ["Istanbul", "Ankara", "Izmir", "Bursa"] },
+    { country: "Mexico", cities: ["Mexico", "Guadalajara", "Monterrey", "Puebla"] },
+   { country: "UAE", cities: ["Dubai", "Abu Dhabi", "Sharjah", "Ajman"] },
+   { country: "Saudi Arabia", cities: ["Riyadh", "Jeddah", "Mecca", "Medina"] },
+   { country: "Poland", cities: ["Warsaw", "Krakow", "Lodz", "Wroclaw"] },
+   { country: "Netherlands", cities: ["Amsterdam", "Rotterdam", "The Hague", "Utrecht"] },
+   { country: "Switzerland", cities: ["Geneva", "Zurich", "Bern", "Basel"] },
+   { country: "Sweden", cities: ["Stockholm", "Gothenburg", "Malmö", "Uppsala"] },
+   { country: "Norway", cities: ["Oslo", "Bergen", "Stavanger", "Trondheim"] },
+    { country: "Republic of South Africa", cities: ["Cape Town", "Johannesburg", "Durban", "Pretoria"] },
+    { country: "Singapore", cities: ["Singapore"] },
+    { country: "Hong Kong", cities: ["Hong Kong"] },
+    { country: "Thailand", cities: ["Bangkok", "Chiang Mai", "Pattaya", "Phuket"] },
+    { country: "Malaysia", cities: ["Kuala Lumpur", "George Town", "Johor Bahru", "Ipoh"] },
+    { country: "Indonesia", cities: ["Jakarta", "Surabaya", "Bandung", "Medan"] },
+    { country: "Vietnam", cities: ["Hanoi", "Ho Chi Minh", "Da Nang", "Hai Phong"] },
+    { country: "Philippines", cities: ["Manila", "Quezon", "Davao", "Cebu"] },
+    { country: "Argentina", cities: ["Buenos Aires", "Cordoba", "Rosario", "Mendoza"] },
+    { country: "Chile", cities: ["Santiago", "Valparaiso", "Concepcion", "La Serena"] },
+    { country: "Colombia", cities: ["Bogota", "Medellin", "Cali", "Barranquilla"] },
+    { country: "Egypt", cities: ["Cairo", "Alexandria", "Giza", "Luxor"] },
+    { country: "Nigeria", cities: ["Lagos", "Abuja", "Kano", "Ibadan"] },
+    { country: "Pakistan", cities: ["Karachi", "Lahore", "Islamabad", "Faisalabad"] },
+    { country: "Bangladesh", cities: ["Dhaka", "Chittagong", "Khulna", "Rajshahi"] },
+   { country: "Ukraine", cities: ["Kiev", "Kharkov", "Odessa", "Lvov"] },
+   { country: "Kazakhstan", cities: ["Astana", "Almaty", "Shymkent", "Karaganda"] },
+   { country: "Azerbaijan", cities: ["Baku", "Ganja", "Sumgayit", "Mingachevir"] },
+   { country: "Georgia", cities: ["Tbilisi", "Batumi", "Kutaisi", "Rustavi"] },
+   { country: "Qatar", cities: ["Doha", "Al Rayyan", "Umm Salal", "Al Wakrah"] },
+   { country: "Kuwait", cities: ["Kuwait City", "Al Ahmadi", "Hawalli", "Farwaniya"] },
+   { country: "New Zealand", cities: ["Auckland", "Wellington", "Christchurch", "Hamilton"] },
+    { country: "Austria", cities: ["Vienna", "Salzburg", "Graz", "Innsbruck"] },
+    { country: "Belgium", cities: ["Brussels", "Antwerp", "Gent", "Liege"] },
+    { country: "Denmark", cities: ["Copenhagen", "Aarhus", "Odense", "Aalborg"] },
+    { country: "Ireland", cities: ["Dublin", "Cork", "Limerick", "Galway"] },
+    { country: "Finland", cities: ["Helsinki", "Espoo", "Tampere", "Turku"] }
+    ];
+  
+  export default locationData;
+  
