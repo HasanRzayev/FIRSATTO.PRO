@@ -3,22 +3,24 @@
 import { redirect } from "next/navigation";
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
-import { headers } from "next/headers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-const getLocale = async () => {
-  const pathname = (await headers()).get('referer')?.split('/') || [];
-  return pathname[3] || 'en'; // URL-nin ikinci hissəsindən locale alırıq (nümunə: /en/dashboard)
-}
+// referer-i formData-dan götür
+const getLocale = (referer?: string): string => {
+  const pathname = referer?.split('/') || [];
+  return pathname[3] || 'en';
+};
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const fullName = formData.get("full_name")?.toString();
+  const origin = formData.get("origin")?.toString();
+  const referer = formData.get("referer")?.toString();
+  const locale = getLocale(referer);
+
   const supabase = await createClient();
-  const origin = headers().get("origin");
-  const locale = getLocale();
 
   if (!email || !password || !fullName) {
     return encodedRedirect(
@@ -70,9 +72,10 @@ export const signUpAction = async (formData: FormData) => {
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const supabase = await createClient();
-  const locale = getLocale();
+  const referer = formData.get("referer")?.toString();
+  const locale = getLocale(referer);
 
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
@@ -84,9 +87,11 @@ export const signInAction = async (formData: FormData) => {
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
-  const supabase = await createClient();
   const callbackUrl = formData.get("callbackUrl")?.toString();
-  const locale = getLocale();
+  const referer = formData.get("referer")?.toString();
+  const locale = getLocale(referer);
+
+  const supabase = await createClient();
 
   if (!email) {
     return encodedRedirect("error", `${BASE_URL}/${locale}/forgot-password`, "Email is required");
@@ -117,11 +122,12 @@ export const forgotPasswordAction = async (formData: FormData) => {
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
-  const supabase = await createClient();
-  const locale = getLocale();
-
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
+  const referer = formData.get("referer")?.toString();
+  const locale = getLocale(referer);
+
+  const supabase = await createClient();
 
   if (!password || !confirmPassword) {
     return encodedRedirect(
@@ -156,9 +162,11 @@ export const resetPasswordAction = async (formData: FormData) => {
   );
 };
 
-export const signOutAction = async () => {
+export const signOutAction = async (formData: FormData) => {
+  const referer = formData.get("referer")?.toString();
+  const locale = getLocale(referer);
+
   const supabase = await createClient();
   await supabase.auth.signOut();
-  const locale = getLocale();
   return redirect(`${BASE_URL}/${locale}/sign-in`);
 };
