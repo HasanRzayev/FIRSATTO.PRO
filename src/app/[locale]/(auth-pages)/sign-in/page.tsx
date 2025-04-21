@@ -1,18 +1,58 @@
-
 'use client'
+
+import { useState, useEffect } from 'react';
 import { signInAction } from "../../../../app/actions";
-import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
-import { usePathname } from 'next/navigation'
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  const searchParams = (await props.searchParams) ?? {};
-  const pathname = usePathname()
-  const locale = pathname?.split('/')[1] || 'en'; // URL-dən locale dəyərini alırıq
+// ✅ Form cavab tipi
+type FormResponse = {
+  success?: string;
+  error?: string;
+  message?: string;
+};
+
+// ✅ FormMessage komponentini burada təkrar yaradırıq (external import olmadan)
+function FormMessage({ message }: { message: FormResponse }) {
+  return (
+    <div className="flex flex-col gap-2 w-full max-w-md text-sm">
+      {message.success && (
+        <div className="text-green-700 border-l-2 border-green-700 px-4">
+          {message.success}
+        </div>
+      )}
+      {message.error && (
+        <div className="text-red-700 border-l-2 border-red-700 px-4">
+          {message.error}
+        </div>
+      )}
+      {message.message && (
+        <div className="text-gray-700 border-l-2 border-gray-500 px-4">
+          {message.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Login(props: { searchParams: Promise<FormResponse | null> }) {
+  const [searchParams, setSearchParams] = useState<FormResponse>({});
+
+  useEffect(() => {
+    async function fetchSearchParams() {
+      const params = await props.searchParams;
+      setSearchParams({
+        success: params?.success ?? '',
+        error: params?.error ?? '',
+        message: params?.message ?? '',
+      });
+    }
+    fetchSearchParams();
+  }, [props.searchParams]);
+
   return (
     <main className="w-full min-h-screen flex items-center justify-center">
       <div className="w-full max-w-xl bg-white p-10 rounded-2xl shadow-2xl">
@@ -64,6 +104,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
 
           <GoogleSignInButton label="Sign in with Google" />
 
+          {/* ✅ Burada heç bir error verməyəcək */}
           <FormMessage message={searchParams} />
         </form>
       </div>

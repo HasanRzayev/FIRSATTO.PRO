@@ -1,5 +1,4 @@
-// app/sign-up/page.tsx
-"use client";
+'use client'
 
 import { useSearchParams } from "next/navigation";
 import { signUpAction } from "../../../../app/actions";
@@ -16,19 +15,8 @@ export default function Signup() {
 
   const message = {
     success: searchParams?.get("success") || undefined,
-    error: searchParams?.get("error") || "", // Change undefined to an empty string for error
+    error: searchParams?.get("error") || "", // If no error, set an empty string
   };
-  
-
-  if (message.success || message.error) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white p-6 rounded-2xl shadow-xl">
-          <FormMessage message={message} />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <main className="w-full min-h-screen flex items-center justify-center">
@@ -41,61 +29,62 @@ export default function Signup() {
           </Link>
         </p>
         <form className="flex flex-col gap-6" action={signUpAction} method="POST">
-  <div>
-    <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-      Email
-    </Label>
-    <Input
-      className="mt-2"
-      name="email"
-      placeholder="you@example.com"
-      required
-    />
-  </div>
+          <div>
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              Email
+            </Label>
+            <Input
+              className="mt-2"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
 
-  <div>
-    <Label htmlFor="full_name" className="text-sm font-medium text-gray-700">
-      Full Name
-    </Label>
-    <Input
-      className="mt-2"
-      name="full_name"
-      placeholder="Your Full Name"
-      required
-    />
-  </div>
+          <div>
+            <Label htmlFor="full_name" className="text-sm font-medium text-gray-700">
+              Full Name
+            </Label>
+            <Input
+              className="mt-2"
+              name="full_name"
+              placeholder="Your Full Name"
+              required
+            />
+          </div>
 
-  <div>
-    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-      Password
-    </Label>
-    <Input
-      className="mt-2"
-      type="password"
-      name="password"
-      placeholder="Your password"
-      minLength={6}
-      required
-    />
-  </div>
+          <div>
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Password
+            </Label>
+            <Input
+              className="mt-2"
+              type="password"
+              name="password"
+              placeholder="Your password"
+              minLength={6}
+              required
+            />
+          </div>
 
-  <SubmitButton
-    pendingText="Signing up..."
-    formAction={signUpAction}
-    className="bg-blue-600 text-white hover:bg-blue-700 rounded-lg py-2"
-  >
-    Sign up
-  </SubmitButton>
-  <GoogleSignInButton label="Sign up with Google" />
+          <SubmitButton
+            pendingText="Signing up..."
+            formAction={signUpAction}
+            className="bg-blue-600 text-white hover:bg-blue-700 rounded-lg py-2"
+          >
+            Sign up
+          </SubmitButton>
 
-  {/* ❗ Sadəcə error varsa göstər */}
-  {message.error && (
-    <p className="text-sm text-red-600 font-medium text-center">{message.error}</p>
-  )}
-</form>
+          <GoogleSignInButton label="Sign up with Google" />
 
+          {/* Show error message if any */}
+          {message.error && (
+            <p className="text-sm text-red-600 font-medium text-center">{message.error}</p>
+          )}
+        </form>
+
+        <SmtpMessage />
       </div>
-      <SmtpMessage />
     </main>
   );
 }

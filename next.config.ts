@@ -7,7 +7,7 @@ module.exports = createNextIntlPlugin({
     domains: ['res.cloudinary.com']
   },
   i18n: {
-    locales: ['en', 'az', 'ru', 'de', 'es', 'it', 'sv', 'tr'],
+    locales: ['en', 'az', 'ru'],
     defaultLocale: 'en',
     localeDetection: false // `false` burada da istifadə edilir
   }
