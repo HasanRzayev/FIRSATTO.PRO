@@ -1,19 +1,14 @@
-// next.config.ts
+// next.config.js
 
-import { NextConfig } from 'next';
-import createNextIntlPlugin from 'next-intl/plugin';
+const createNextIntlPlugin = require('next-intl/plugin');
 
-const withNextIntl = createNextIntlPlugin();
-
-const nextConfig: NextConfig = {
+module.exports = createNextIntlPlugin({
   images: {
-    domains: ['res.cloudinary.com'],
+    domains: ['res.cloudinary.com']
   },
   i18n: {
-    defaultLocale: 'en',
     locales: ['en', 'az', 'ru', 'de', 'es', 'it', 'sv', 'tr'],
-    localeDetection: false // Həmişə /en ilə başlasın deyə
+    defaultLocale: 'en',
+    localeDetection: false // `false` burada da istifadə edilir
   }
-};
-
-export default withNextIntl(nextConfig);
+});
