@@ -2,13 +2,16 @@
 
 const createNextIntlPlugin = require('next-intl/plugin');
 
-module.exports = createNextIntlPlugin({
-  images: {
-    domains: ['res.cloudinary.com']
-  },
+const withNextIntl = createNextIntlPlugin({
   i18n: {
     locales: ['en', 'az', 'ru'],
     defaultLocale: 'en',
-    localeDetection: false // `false` burada da istifadə edilir
+    localeDetection: false
+  }
+});
+
+module.exports = withNextIntl({
+  images: {
+    domains: ['res.cloudinary.com']
   }
 });
