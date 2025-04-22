@@ -6,26 +6,37 @@ import { useRouter } from 'next/navigation';
 import Card from '@/components/Card';
 import { useTranslations } from 'next-intl';
 
-interface SavedAd {
-  ads: {
+interface Ad {
+  id: string;
+  title: string;
+  description: string;
+  category?: string;
+  image_urls: string[];
+  video_urls?: string[];
+  location: string;
+  price: number;
+  user?: {
     id: string;
-    title: string;
-    description: string;
-    image_urls: string[];
-    location: string;
-    price: number;
-    user_profiles?: {
-      id?: string;
-      full_name: string;
-    };
+    userName: string;
   };
+  user_profiles?: {
+    id?: string;
+    full_name: string;
+  };
+}
+
+interface SavedAdResponse {
+  id: string;
+  user_id: string;
+  ad_id: string;
+  ads: Ad | null;
 }
 
 const LIMIT = 12;
 
 const SavedAdsPage: React.FC = () => {
   const t = useTranslations();
-  const [savedAds, setSavedAds] = useState<SavedAd[]>([]);
+  const [savedAds, setSavedAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
@@ -45,15 +56,17 @@ const SavedAdsPage: React.FC = () => {
 
     const { data, error } = await supabase
       .from('user_saved_ads')
-      .select(` 
+      .select(`
         id,
         user_id,
         ad_id,
-        ads: user_ads (
+        ads:user_ads (
           id,
           title,
           description,
+          category,
           image_urls,
+          video_urls,
           location,
           price,
           user_profiles (
@@ -65,24 +78,31 @@ const SavedAdsPage: React.FC = () => {
       .eq('user_id', session.user.id)
       .range(offset, offset + LIMIT - 1);
 
-    if (error) {
+    if (error || !data) {
       console.error('Error fetching saved ads:', error);
-    } else {
-      if (data.length < LIMIT) {
-        setHasMore(false);
-      }
-      setSavedAds((prev) => [...prev, ...data]);
-      setOffset((prev) => prev + LIMIT);
+      setLoading(false);
+      return;
     }
 
+    const savedData = (data as any[]).filter(
+      (item): item is SavedAdResponse => item.ads !== null && item.ads !== undefined
+    );
+
+    const ads: Ad[] = savedData.map((item) => item.ads!);
+
+    if (ads.length < LIMIT) {
+      setHasMore(false);
+    }
+
+    setSavedAds((prev) => [...prev, ...ads]);
+    setOffset((prev) => prev + LIMIT);
     setLoading(false);
   }, [offset, supabase, router]);
 
   useEffect(() => {
     fetchSavedAds();
-  }, []); // İlk dəfə yüklə
+  }, []);
 
- 
   useEffect(() => {
     if (!hasMore || loading) return;
 
@@ -114,10 +134,9 @@ const SavedAdsPage: React.FC = () => {
   return (
     <div className="p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {savedAds.map((item) => {
-          const ad = item.ads;
-          return <Card key={ad.id} ad={ad} />;
-        })}
+        {savedAds.map((ad) => (
+          <Card key={ad.id} ad={ad} />
+        ))}
       </div>
       {hasMore && (
         <div ref={loaderRef} className="py-6 text-center text-gray-500">

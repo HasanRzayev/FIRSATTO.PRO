@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Ana səhifə -->
+  <url>
+    <loc>https://www.firsatto.com/</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- Haqqında səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/about</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Əlaqə səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/contact</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Inbox səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/inbox</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Profil səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/profile</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Dinamik profil səhifələri -->
+  <url>
+    <loc>https://www.firsatto.com/profile123</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.60</priority>
+  </url>
+
+  <!-- Ətraflı elan səhifələri -->
+  <url>
+    <loc>https://www.firsatto.com/details123</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.60</priority>
+  </url>
+
+  <!-- Daxil ol səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/sign-in</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.50</priority>
+  </url>
+
+  <!-- Qeydiyyat səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/sign-up</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.50</priority>
+  </url>
+
+  <!-- Saxlanılan elanlar səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/saved-ads</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Parametrlər səhifəsi -->
+  <url>
+    <loc>https://www.firsatto.com/settings</loc>
+    <lastmod>2025-04-22</lastmod>
+    <priority>0.70</priority>
+  </url>
+</urlset>
