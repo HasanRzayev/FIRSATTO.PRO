@@ -1,4 +1,4 @@
-// components/Loading.js
+ 
 import React from 'react';
 
 const Loading = () => {

@@ -75,7 +75,7 @@ export default function CreateAdPage() {
     return data.secure_url;
   };
 
-  // Profanity filtering
+ 
   const filterProfanity = (text: string) => {
     let result = text;
     badWords.forEach((word) => {
@@ -85,7 +85,7 @@ export default function CreateAdPage() {
     return result;
   };
 
-  // Content moderation: returns true if inappropriate content found
+ 
   const moderateContent = (text: string) => {
     const lower = text.toLowerCase();
     return badWords.some((word) => lower.includes(word));

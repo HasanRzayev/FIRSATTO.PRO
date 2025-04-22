@@ -1,4 +1,4 @@
-// pages/api/socket.js
+ 
 export default function handler(req, res) {
     if (req.method === "GET") {
       const WebSocket = require("ws");
@@ -9,7 +9,7 @@ export default function handler(req, res) {
           console.log("received: %s", message);
         });
   
-        // Yeni bir mesaj geldiğinde tüm bağlı istemcilere ilet
+ 
         ws.send(JSON.stringify({ adId: 1, userName: "Hasan", content: "Yorum 1" }));
       });
   

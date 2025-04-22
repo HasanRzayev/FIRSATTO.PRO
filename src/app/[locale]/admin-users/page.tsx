@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client'; // Make sure this is correct path
+import { createClient } from '@/utils/supabase/client'; 
 import { useRouter } from 'next/navigation';
 
-// Initialize Supabase client
-const supabase = createClient(); // No arguments needed, the URL and anon key will be handled in your createClient function
+ 
+const supabase = createClient(); 
 type UserProfile = {
   id: string;
   full_name: string;
@@ -13,12 +13,12 @@ type UserProfile = {
 };
 
 export default function AdminUsers() {
-  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]); // Define the type here
+  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]); 
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Function to fetch users from the user_profiles table
+ 
     const fetchUsers = async () => {
       setIsLoading(true);
 
@@ -27,7 +27,7 @@ export default function AdminUsers() {
       if (error) {
         alert('Error fetching user profiles.');
       } else {
-        setUserProfiles(data); // Now TypeScript understands this
+        setUserProfiles(data); 
       }
 
       setIsLoading(false);
@@ -36,7 +36,7 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
-  // Function to delete a user profile
+ 
   const deleteUser = async (id: string) => {
     const { error } = await supabase.from('user_profiles').delete().eq('id', id);
     if (error) {
@@ -46,11 +46,11 @@ export default function AdminUsers() {
     }
   };
 
-  // Function to update the "is_expert" status of a user profile
+ 
   const updateUser = async (id: string, isExpert: boolean) => {
     const { error } = await supabase
       .from('user_profiles')
-      .update({ is_expert: !isExpert }) // Toggle expert status
+      .update({ is_expert: !isExpert }) 
       .eq('id', id);
 
     if (error) {

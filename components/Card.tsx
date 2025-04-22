@@ -33,10 +33,9 @@ const Card: React.FC<CardProps> = ({ ad }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const pathname = usePathname();
-  const locale = pathname?.split('/')[1] ?? '';
-   // URL-dəki locale dəyərini alırıq
-  // Supabase session vasitəsilə user ID-ni əldə et
+  const pathname = usePathname()
+  const locale = pathname.split('/')[1] // URL-dəki locale dəyərini alırıq
+ 
   useEffect(() => {
     const getUserId = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -47,7 +46,7 @@ const Card: React.FC<CardProps> = ({ ad }) => {
     getUserId();
   }, [supabase]);
 
-  // İstifadəçi həmin elanı artıq qeyd edibmi yoxla
+ 
   useEffect(() => {
     const checkIfSaved = async () => {
       if (!userId) return;

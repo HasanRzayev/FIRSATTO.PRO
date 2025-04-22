@@ -1,4 +1,4 @@
-// components/Navigation.tsx
+ 
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Importing usePathname from next/navigation
@@ -8,7 +8,7 @@ export default function Navigation({ locale }: { locale: string }) {
   const pathname = usePathname(); // Using usePathname to get the current path
   const t = useTranslations(); // Get translations for the Navigation namespace
 
-  // A function to check if the link is active
+ 
   const isActive = (path: string) => pathname === path ? "text-[#FF8C00]" : "hover:text-[#FF8C00]";
 
   return (

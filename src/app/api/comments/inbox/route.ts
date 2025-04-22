@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-// Define the Comment type
+ 
 interface Comment {
   id: string;
   content: string;
@@ -10,7 +10,7 @@ interface Comment {
   user_profiles: {
     username: string;
     profile_picture: string;
-  }[];  // Keep it as an array since Supabase returns an array
+  }[]; 
   ad_id: string;
   parent_comment_id: string | null;
   user_id: string;
@@ -19,20 +19,20 @@ interface Comment {
   }[]; 
   parent_comment: {
     user_id: string;
-  }[];  // This might also be an array, depending on your schema
+  }[];  
 }
 
 export async function GET(req: Request) {
-  const supabase = await createClient();  // Await the creation of the Supabase client
+  const supabase = await createClient();  
 
-  // Get user info
+ 
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
     return NextResponse.json({ error: error?.message || "User not found" }, { status: 401 });
   }
 
-  // 1. User's comments
+ 
   const { data: userComments, error: userCommentsError } = await supabase
     .from("comments")
     .select("id")
@@ -45,7 +45,7 @@ export async function GET(req: Request) {
   const userCommentIds = userComments.map(c => c.id);
   if (userCommentIds.length === 0) return NextResponse.json([]);
 
-  // 2. First-level replies
+ 
   const { data: firstLevelReplies, error: firstLevelError } = await supabase
     .from("comments")
     .select(`
@@ -63,7 +63,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: firstLevelError.message }, { status: 500 });
   }
 
-  // Handle user_profiles as an array and extract the first profile
+ 
   firstLevelReplies.forEach(reply => {
     if (reply.user_profiles && reply.user_profiles.length > 0) {
       const firstProfile = reply.user_profiles[0];
@@ -73,7 +73,7 @@ export async function GET(req: Request) {
 
   const firstLevelReplyIds = firstLevelReplies.map(r => r.id);
 
-  // 3. Second-level replies if first-level replies exist
+ 
   let secondLevelReplies: Comment[] = [];
   if (firstLevelReplyIds.length > 0) {
     const { data: secondReplies, error: secondLevelError } = await supabase
@@ -93,7 +93,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: secondLevelError.message }, { status: 500 });
     }
 
-    // Handle user_profiles as an array and extract the first profile
+ 
     secondReplies.forEach(reply => {
       if (reply.user_profiles && reply.user_profiles.length > 0) {
         const firstProfile = reply.user_profiles[0];
@@ -104,7 +104,7 @@ export async function GET(req: Request) {
     secondLevelReplies = secondReplies;
   }
 
-  // 4. Combine all replies and sort them by created_at
+ 
   const allReplies = [...firstLevelReplies, ...secondLevelReplies];
   allReplies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 

@@ -33,12 +33,12 @@ export default function UnreadReplyCount() {
   }, []);
   
 
-  // Method to filter and return only unread replies
+ 
   const getUnreadReplies = (result: any): any[] => {
-    // Check if result is an array or has data
+ 
     const replies = Array.isArray(result) ? result : result.data ?? [];
     
-    // Filter out unread replies
+ 
     return replies.filter((r: any) => r.is_read === false);
   };
 

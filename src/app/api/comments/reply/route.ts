@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { commentId, userId, text, adId } = body; // adId is passed along
 
-    // Validate input
+ 
     if (!commentId) {
       return NextResponse.json({ message: "Comment ID is missing" }, { status: 400 });
     }
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     const supabase = await createClient(); // Ensure this is awaited
 
-    // Check if the user exists in the user_profiles table
+ 
     const { data: userData, error: userError } = await supabase
       .from('user_profiles')
       .select('id')
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'User does not exist.' }, { status: 400 });
     }
 
-    // Check if the ad exists in the user_ads table
+ 
     const { data: adData, error: adError } = await supabase
       .from('user_ads')
       .select('id')
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Ad does not exist.' }, { status: 400 });
     }
 
-    // Now insert the comment into the 'comments' table
+ 
     const { data, error } = await supabase
       .from("comments")
       .insert([

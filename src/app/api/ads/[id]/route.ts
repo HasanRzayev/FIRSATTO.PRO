@@ -1,9 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient();  // Await the client creation
+  const supabase = await createClient(); 
 
-  // Await the promise to get the id
+ 
   const { id } = await params;
 
   if (!id) {

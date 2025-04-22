@@ -1,8 +1,7 @@
 import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import the CSS
-
+import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 interface ImageCarouselProps {
-  images: string[]; // Explicitly type the images prop as a string array
+  images: string[]; 
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images = [] }) => {

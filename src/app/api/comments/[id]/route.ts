@@ -5,10 +5,10 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // Await the promise to get the supabase client
+ 
   const supabase = await createClient();  
 
-  const id = (await params).id; // `params`-dən `id`-ni gözləyib alırıq
+  const id = (await params).id; 
 
   console.log("Fetching comments for adId:", id);
 

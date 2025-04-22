@@ -151,7 +151,7 @@ export default function ProfilePage() {
                 {/* Silmək düyməsi */}
                 <button
                   onClick={(e) => {
-                    e.stopPropagation(); // Card klikini blokla
+                    e.stopPropagation(); 
                     handleDeleteAd(ad.id);
                   }}
                   className="bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700"
@@ -166,7 +166,7 @@ export default function ProfilePage() {
                 {/* Redaktə etmə düyməsi */}
                 <button
                   onClick={(e) => {
-                    e.stopPropagation(); // Card klikini blokla
+                    e.stopPropagation(); 
                     setEditingAd(ad);
                   }}
                   className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700"

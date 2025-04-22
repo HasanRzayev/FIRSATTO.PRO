@@ -1,4 +1,4 @@
-// DetailPage.tsx
+ 
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -6,11 +6,10 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import CommentSection from "@/components/CommentSection";
 import ImageCarousel from "@/components/ImageCarousel";
-// src/types.ts
  interface Comment {
   id: string;
   content: string;
-  timestamp: string;  // Make sure this is included
+  timestamp: string;  
   user: {
     full_name: string;
   };
@@ -227,7 +226,7 @@ const DetailPage = () => {
   }, [id]);
 
   useEffect(() => {
-    setCurrentUser({ id: "user123" }); // Replace with actual auth
+    setCurrentUser({ id: "user123" }); 
   }, []);
 
   if (!id || id.length < 10) {

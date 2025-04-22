@@ -1,17 +1,17 @@
-// Backend - route.ts
+ 
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! // server-side secret key
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! 
 );
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { adId, userId, content, parentCommentId } = body;
 
-  // adId'yi kontrol et
+ 
   if (!adId) {
     console.error("adId is missing or null");
     return NextResponse.json({ error: "Ad ID eksik." }, { status: 400 });
@@ -21,11 +21,11 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabase
       .from('comments')
       .insert([{
-        ad_id: adId, // adId burada doğru bir şekilde sağlanmalı
+        ad_id: adId,
         user_id: userId,
         content
       }])
-      .select('id'); // sadece ID geri alırız
+      .select('id'); 
 
     if (error) {
       console.error("Supabase insert error:", error.message);

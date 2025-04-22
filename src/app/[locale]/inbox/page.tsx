@@ -65,10 +65,9 @@ export default function InboxPage() {
       const result = await res.json();
       const data = Array.isArray(result) ? result : result?.data ?? [];
 
-      // Remove duplicate reply.id's
       const uniqueReplies = Array.from(
         new Map(data.map((r: Reply) => [r.id, r])).values()
-      ) as Reply[]; // Burada tipi açıq şəkildə bildiririk
+      ) as Reply[];
       
       setReplies(uniqueReplies);
       setLoading(false);

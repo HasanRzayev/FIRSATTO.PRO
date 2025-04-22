@@ -86,31 +86,32 @@ export const LocaleSwitcher = () => {
         </button>
 
         {isOpen && (
-          <div
-            className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="language-selector"
-          >
-            <div className="py-1 grid grid-cols-2 gap-2" role="none">
-              {languages.map((language) => (
-                <button
-                  key={language.key}
-                  onClick={() => handleLanguageChange(language.key)}
-                  className={`${
-                    currentLocale === language.key
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700"
-                  } block px-4 py-2 text-sm text-left items-center inline-flex hover:bg-gray-100`}
-                  role="menuitem"
-                >
-                  <FlagIcon countryCode={language.key} />
-                  <span className="truncate">{language.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+  <div
+    className="origin-top-right absolute right-0 mt-2 w-48 sm:w-64 md:w-80 lg:w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+    role="menu"
+    aria-orientation="vertical"
+    aria-labelledby="language-selector"
+  >
+    <div className="py-1 grid grid-cols-1 sm:grid-cols-2 gap-2" role="none">
+      {languages.map((language) => (
+        <button
+          key={language.key}
+          onClick={() => handleLanguageChange(language.key)}
+          className={`${
+            currentLocale === language.key
+              ? "bg-gray-100 text-gray-900"
+              : "text-gray-700"
+          } block px-4 py-2 text-sm text-left items-center inline-flex hover:bg-gray-100 w-full`}
+          role="menuitem"
+        >
+          <FlagIcon countryCode={language.key} />
+          <span className="truncate">{language.name}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
       </div>
     </div>
   );

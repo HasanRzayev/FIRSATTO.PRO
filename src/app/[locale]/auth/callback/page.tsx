@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
 const getLocale = () => {
-  const knownLocales = ['az', 'en']; // dəstəklənən dillər
+  const knownLocales = ['az', 'en']; 
   const pathParts = window.location.pathname.split('/');
-  const maybeLocale = pathParts[1]; // /az/... /en/... kimi
+  const maybeLocale = pathParts[1]; 
   return knownLocales.includes(maybeLocale) ? maybeLocale : 'en';
 };
 
@@ -26,7 +26,7 @@ export default function AuthCallbackPage() {
 
       const user = session.user;
 
-      // Yoxla profil var?
+ 
       const { data: existingProfile, error: profileError } = await supabase
         .from('user_profiles')
         .select('id')

@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
-// referer-i formData-dan götür
+ 
 const getLocale = (referer?: string): string => {
   const pathname = referer?.split('/') || [];
   return pathname[3] || 'en';

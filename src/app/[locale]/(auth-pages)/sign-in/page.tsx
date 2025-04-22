@@ -8,14 +8,14 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 
-// ✅ Form cavab tipi
+ 
 type FormResponse = {
   success?: string;
   error?: string;
   message?: string;
 };
 
-// ✅ FormMessage komponentini burada təkrar yaradırıq (external import olmadan)
+ 
 function FormMessage({ message }: { message: FormResponse }) {
   return (
     <div className="flex flex-col gap-2 w-full max-w-md text-sm">

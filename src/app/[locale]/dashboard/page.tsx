@@ -4,20 +4,17 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 
-// Use createClient to initialize Supabase
-const supabase = createClient(); // No arguments needed, the URL and anon key will be handled in your createClient function
-
+const supabase = createClient(); 
 export default function Dashboard() {
-  const [isMounted, setIsMounted] = useState(false); // Track mount status
+  const [isMounted, setIsMounted] = useState(false); 
   const router = useRouter();
 
   useEffect(() => {
-    // Set isMounted to true after the component has mounted
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!isMounted) return; // Prevent router logic before component is mounted
+    if (!isMounted) return; 
 
     const fetchData = async () => {
       const {
@@ -34,23 +31,19 @@ export default function Dashboard() {
     fetchData();
   }, [router, isMounted]);
 
-  // Navigate to Users Page
   const goToUsersPage = () => {
     router.push('/admin-users');
   };
 
-  // Navigate to Ads Page
   const goToAdsPage = () => {
     router.push('/admin-ads');
   };
-// Navigate to Home Page
 const goToHomePage = () => {
     router.push('/');
   };
   
-  // Prevent rendering before the component is mounted
   if (!isMounted) {
-    return null; // Or show a loading spinner
+    return null;
   }
 
   return (

@@ -5,16 +5,15 @@ import { FaSmile } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 import { EmojiClickData } from "emoji-picker-react";
 
-// Dynamically import EmojiPicker without SSR
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
-  loading: () => <p>Loading emoji picker...</p>, // Show loading text until the emoji picker is ready
+  loading: () => <p>Loading emoji picker...</p>, 
 });
 
 interface Comment {
   id: string;
   content: string;
-  timestamp: string;  // Add this if CommentSection requires it
+  timestamp: string; 
   user: {
     full_name: string;
   };
@@ -58,15 +57,14 @@ const CommentSection = ({ adId, userId, comments, setComments }: CommentSectionP
     if (response.ok) {
       const result = await response.json();
       setNewComment("");
-// In CommentSection.tsx
 setComments((prev) => [
   ...prev,
   {
     id: result.commentId,
     content: newComment,
-    timestamp: new Date().toISOString(), // Add current timestamp
+    timestamp: new Date().toISOString(), 
     user: {
-      full_name: "Current User" // Or get from your auth system
+      full_name: "Current User" 
     }
   }
 ]);

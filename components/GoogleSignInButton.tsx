@@ -9,14 +9,14 @@ export default function GoogleSignInButton({ label = "Google ilə Daxil Ol" }: {
   const router = useRouter();
   const pathname = usePathname();
 
-  // URL-dən locale dəyərini çıxarırıq (ilk hissə)
+ 
   const locale = pathname?.split('/')[1] || 'en'; // default olaraq 'az' və ya istədiyin dəyəri ver
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Redirect URL-də locale əlavə edirik
+ 
         redirectTo: `${location.origin}/auth/callback?locale=${locale}`, // locale parametri əlavə olundu
       },
     });
@@ -66,7 +66,7 @@ export default function GoogleSignInButton({ label = "Google ilə Daxil Ol" }: {
           console.log('Profil uğurla yaradıldı');
         }
 
-        // Yönləndirmə URL-ə locale parametri əlavə edilərək edilir
+ 
         router.push(`/${locale}/dashboard`);
       }
     }, 1000);

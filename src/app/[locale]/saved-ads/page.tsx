@@ -5,30 +5,21 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import Card from '@/components/Card';
 import { useTranslations } from 'next-intl';
+
 interface SavedAd {
-  id: string;
-  user_id: string;
-  ad_id: string;
   ads: {
     id: string;
     title: string;
     description: string;
-    category: string;
     image_urls: string[];
-    video_urls: string[];
     location: string;
     price: number;
-    user: {
-      id: string;
-      userName: string;
-    };
     user_profiles?: {
-      id: string;
+      id?: string;
       full_name: string;
-    }[];
-  }[];
+    };
+  };
 }
-
 
 const LIMIT = 12;
 
@@ -41,16 +32,17 @@ const SavedAdsPage: React.FC = () => {
   const supabase = createClient();
   const router = useRouter();
   const loaderRef = useRef<HTMLDivElement | null>(null);
+
   const fetchSavedAds = useCallback(async () => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-  
+
     if (!session?.user?.id) {
       router.push('/login');
       return;
     }
-  
+
     const { data, error } = await supabase
       .from('user_saved_ads')
       .select(` 
@@ -64,8 +56,6 @@ const SavedAdsPage: React.FC = () => {
           image_urls,
           location,
           price,
-          category,
-          video_urls,
           user_profiles (
             id,
             full_name
@@ -74,54 +64,17 @@ const SavedAdsPage: React.FC = () => {
       `)
       .eq('user_id', session.user.id)
       .range(offset, offset + LIMIT - 1);
-  
-    // BU KISMI EKLİYORUZ ↓
+
     if (error) {
       console.error('Error fetching saved ads:', error);
     } else {
       if (data.length < LIMIT) {
         setHasMore(false);
       }
-    
-      const transformedData: SavedAd[] = data.map(item => {
-        const ad = item.ads?.[0] ?? {
-          id: '',
-          title: '',
-          description: '',
-          image_urls: [],
-          location: '',
-          price: 0,
-          category: '',
-          video_urls: [],
-          user: { id: '', userName: '' },
-          user_profiles: []
-        };
-      
-        const userProfile = ad.user_profiles?.[0];
-      
-        return {
-          ...item,
-          ads: [{
-            ...ad,
-            user: {
-              id: userProfile?.id || '',
-              userName: userProfile?.full_name || 'User'
-            },
-            user_profiles: userProfile
-              ? [{ id: userProfile.id, full_name: userProfile.full_name }]
-              : []
-          }]
-        };
-      });
-      
-      
-    
-      setSavedAds((prev) => [...prev, ...transformedData]);
-      setOffset(prev => prev + LIMIT);
-    
+      setSavedAds((prev) => [...prev, ...data]);
+      setOffset((prev) => prev + LIMIT);
     }
-    // BU KISMI EKLİYORUZ ↑
-  
+
     setLoading(false);
   }, [offset, supabase, router]);
 
@@ -129,7 +82,7 @@ const SavedAdsPage: React.FC = () => {
     fetchSavedAds();
   }, []); // İlk dəfə yüklə
 
-  // Infinite scroll observer
+ 
   useEffect(() => {
     if (!hasMore || loading) return;
 
@@ -161,22 +114,10 @@ const SavedAdsPage: React.FC = () => {
   return (
     <div className="p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {savedAds.map((item) => {
-  const ad = item.ads[0];
-  if (!ad) return null; // əgər ad undefined-dirsə, heç nə göstərmə
-
-  return (
-<Card 
-  key={ad.id} 
-  ad={{
-    ...ad,
-    user_profiles: ad.user_profiles?.[0] // yalnız ilk profili ötür
-  }} 
-/>
-
-  );
-})}
-
+        {savedAds.map((item) => {
+          const ad = item.ads;
+          return <Card key={ad.id} ad={ad} />;
+        })}
       </div>
       {hasMore && (
         <div ref={loaderRef} className="py-6 text-center text-gray-500">

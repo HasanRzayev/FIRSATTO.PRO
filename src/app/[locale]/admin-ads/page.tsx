@@ -7,7 +7,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 
-const supabase = createClient(); // No arguments needed, the URL and anon key will be handled in your createClient function
+const supabase = createClient(); 
 
 export default function AdminAds() {
   const [ads, setAds] = useState<any[]>([]);
@@ -22,7 +22,7 @@ export default function AdminAds() {
     description: "",
     price: "",
     category: "",
-    images: "", // comma-separated URLs
+    images: "", 
   });
 
   const router = useRouter();

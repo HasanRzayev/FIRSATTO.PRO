@@ -1,4 +1,4 @@
-// LocaleLayout.tsx
+ 
 
 import { ThemeModeScript } from "flowbite-react";
 import HeaderAuth from "@/components/header-auth";
