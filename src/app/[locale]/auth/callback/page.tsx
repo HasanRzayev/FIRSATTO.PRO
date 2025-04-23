@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
 const getLocale = () => {
-  const knownLocales = ['az', 'en']; 
-  const pathParts = window.location.pathname.split('/');
-  const maybeLocale = pathParts[1]; 
-  return knownLocales.includes(maybeLocale) ? maybeLocale : 'en';
+  const knownLocales = ['az', 'en'];
+  const urlParams = new URLSearchParams(window.location.search);
+  const maybeLocale = urlParams.get('locale');
+  return knownLocales.includes(maybeLocale || '') ? maybeLocale : 'en';
 };
+
 
 export default function AuthCallbackPage() {
   const supabase = createClient();

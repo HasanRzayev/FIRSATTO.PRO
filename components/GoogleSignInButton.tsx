@@ -17,7 +17,7 @@ export default function GoogleSignInButton({ label = "Google ilə Daxil Ol" }: {
       provider: 'google',
       options: {
  
-        redirectTo: `${location.origin}/auth/callback?locale=${locale}`, // locale parametri əlavə olundu
+        redirectTo: `${window.location.origin}/auth/callback?locale=${locale}`
       },
     });
 
