@@ -4,7 +4,7 @@ import Cookie from "js-cookie";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false });
 
@@ -37,6 +37,7 @@ export default function InboxPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredReplies, setFilteredReplies] = useState<Reply[]>([]);
   const translate = useTranslations();
+  const locale = useLocale(); // burada locale təyin olunur
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const token = Cookie.get("sb-xildjwdpjcogmzuuotym-auth-token.0");
@@ -99,7 +100,7 @@ export default function InboxPage() {
     }
 
     try {
-      const res = await fetch(`${baseUrl}/api/comments/reply`, {
+      const res = await fetch(`${baseUrl}/${locale}/api/comments/reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

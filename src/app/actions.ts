@@ -34,7 +34,7 @@ export const signUpAction = async (formData: FormData) => {
     email,
     password,
     options: {
-      emailRedirectTo: `${BASE_URL}/auth/callback?locale=${locale}`,
+      emailRedirectTo: `${BASE_URL}/${locale}/auth/callback?locale=${locale}`,
     },
   });
 

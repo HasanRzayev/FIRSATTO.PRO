@@ -1,11 +1,12 @@
- 
+// DetailPage.tsx
 "use client";
 
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
 import CommentSection from "@/components/CommentSection";
 import ImageCarousel from "@/components/ImageCarousel";
+import { useTranslations, useLocale } from 'next-intl';
+
  interface Comment {
   id: string;
   content: string;
@@ -31,19 +32,19 @@ import ImageCarousel from "@/components/ImageCarousel";
   };
   comments: Comment[];
 }
-async function getAdById(id: string): Promise<Ad | null> {
+async function getAdById(id: string, locale: string): Promise<Ad | null> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/ads/${id}`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/api/ads/${id}`;
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("❌ Failed to fetch ad:", error);
     return null;
   }
 }
+
 
 const CommentArea = ({
   comments,
@@ -64,6 +65,7 @@ const CommentArea = ({
   const [replyText, setReplyText] = useState("");
   const t = useTranslations();
   const [ad, setAd] = useState<Ad | null>(null);
+  const locale = useLocale(); 
 
   const handleReplyClick = (commentId: string) => {
     setActiveReplyCommentId(commentId);
@@ -74,7 +76,7 @@ const CommentArea = ({
     if (!replyText.trim()) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/comments/reply`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/api/comments/reply`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -214,16 +216,19 @@ const DetailPage = () => {
   const [currentUser, setCurrentUser] = useState<{ id: string } | null>(null);
   const t = useTranslations();
 
+  const locale = useLocale();
+
   useEffect(() => {
     if (id) {
-      getAdById(id).then((data) => {
+      getAdById(id, locale).then((data) => {
         if (data) {
           setAd(data);
           setComments(data.comments.slice(0, 10));
         }
       });
     }
-  }, [id]);
+  }, [id, locale]);
+  
 
   useEffect(() => {
     setCurrentUser({ id: "user123" }); 

@@ -12,7 +12,7 @@ export default function UnreadReplyCount() {
     const fetchReplies = async () => {
       const token = Cookies.get("sb-xildjwdpjcogmzuuotym-auth-token.0");
   
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/comments/inbox`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/api/comments/inbox`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
