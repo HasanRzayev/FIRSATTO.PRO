@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
 const getLocale = () => {
-  const knownLocales = ['az', 'en'];
+  const knownLocales = ['az', 'ru','en'];
   const urlParams = new URLSearchParams(window.location.search);
   const maybeLocale = urlParams.get('locale');
   return knownLocales.includes(maybeLocale || '') ? maybeLocale : 'en';
