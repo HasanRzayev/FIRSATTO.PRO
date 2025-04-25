@@ -20,6 +20,7 @@ export default function GoogleSignInButton({ label = 'Google ilə Daxil Ol' }) {
         redirectTo,
       },
     });
+    console.log('Redirect URL:', redirectTo);
 
     if (error) {
       console.error('Google login error:', error.message);
