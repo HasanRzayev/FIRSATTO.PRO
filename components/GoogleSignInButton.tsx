@@ -16,7 +16,7 @@ export default function GoogleSignInButton({ label = "Google ilə Daxil Ol" }: {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/auth/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback?locale=${locale}`,
       },
     });
     

@@ -6,8 +6,9 @@ import { createClient } from '@/utils/supabase/client';
 
 const getLocale = () => {
   const knownLocales = ['az', 'ru', 'en'];
-  const pathLocale = window.location.pathname.split('/')[1];
-  return knownLocales.includes(pathLocale) ? pathLocale : 'en';
+  const urlParams = new URLSearchParams(window.location.search);
+  const paramLocale = urlParams.get('locale');
+  return knownLocales.includes(paramLocale || '') ? paramLocale! : 'az';
 };
 
 export default function AuthCallbackPage() {
@@ -61,17 +62,8 @@ export default function AuthCallbackPage() {
       }
 
       const locale = getLocale();
-      const targetPath = `${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/settings`;
-      
-      try {
-        // router.push(`/${locale}/settings`); // Əgər SPA yönləndirmədirsə
-        window.location.href = targetPath; // Tam URL redirect üçün daha zəmanətli
-      } catch (err) {
-        console.error('Redirect zamanı xəta baş verdi:', err);
-      }
-      
-
-  
+      const targetPath = `/${locale}/settings`;
+      window.location.href = targetPath;
     };
 
     handleAuthCallback();
