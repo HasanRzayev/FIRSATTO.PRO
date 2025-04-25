@@ -9,22 +9,22 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
+    const handleAuth = async () => {
       try {
-        // Supabase session al
+        // Supabase session yoxla
         const {
           data: { session },
           error: sessionError,
         } = await supabase.auth.getSession();
 
-        if (sessionError || !session || !session.user) {
-          console.error('Session tapılmadı və ya xətalıdır:', sessionError?.message);
+        if (!session || !session.user) {
+          console.error('Session tapılmadı:', sessionError?.message);
           return;
         }
 
         const user = session.user;
 
-        // Profil yoxla
+        // Profil yoxla və ya yarat
         const { data: existingProfile, error: profileError } = await supabase
           .from('user_profiles')
           .select('id')
@@ -36,7 +36,6 @@ export default function AuthCallbackPage() {
           return;
         }
 
-        // Əgər profil yoxdursa, əlavə et
         if (!existingProfile) {
           const fullName = user.user_metadata?.full_name || 'Default Name';
 
@@ -49,28 +48,27 @@ export default function AuthCallbackPage() {
           ]);
 
           if (insertError) {
-            console.error('Profil əlavə olunarkən xəta:', insertError.message);
+            console.error('Profil yaradılarkən xəta:', insertError.message);
             return;
           }
 
-          console.log('Yeni profil əlavə olundu');
+          console.log('Yeni profil yaradıldı');
         } else {
           console.log('Profil artıq mövcuddur');
         }
 
-        // locale tap (URL-dən)
-        const searchParamsString = window.location.search;
-        const urlParams = new URLSearchParams(searchParamsString);
+        // URL-dən locale götür
+        const urlParams = new URLSearchParams(window.location.search);
         const locale = urlParams.get('locale') || 'en';
 
-        // yönləndirmə et
+        // Yönləndir
         window.location.href = `/${locale}/settings`;
-      } catch (err) {
-        console.error('Callback işlənərkən xəta baş verdi:', err);
+      } catch (error) {
+        console.error('Callback səhifəsində xəta:', error);
       }
     };
 
-    handleAuthCallback();
+    handleAuth();
   }, []);
 
   return (
