@@ -12,15 +12,13 @@ export default function GoogleSignInButton({ label = 'Google ilə Daxil Ol' }) {
   const locale = pathname?.split('/')[1] || 'en';
 
   const signInWithGoogle = async () => {
-    const redirectTo = `${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/auth/callback`;
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo,
+        // Redirect URL-də locale əlavə edirik
+        redirectTo: `${location.origin}/auth/callback?locale=${locale}`, // locale parametri əlavə olundu
       },
     });
-    console.log('Redirect URL:', redirectTo);
 
     if (error) {
       console.error('Google login error:', error.message);
