@@ -5,12 +5,10 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
 const getLocale = () => {
-  const knownLocales = ['az', 'ru','en'];
-  const urlParams = new URLSearchParams(window.location.search);
-  const maybeLocale = urlParams.get('locale');
-  return knownLocales.includes(maybeLocale || '') ? maybeLocale : 'en';
+  const knownLocales = ['az', 'ru', 'en'];
+  const pathLocale = window.location.pathname.split('/')[1];
+  return knownLocales.includes(pathLocale) ? pathLocale : 'en';
 };
-
 
 export default function AuthCallbackPage() {
   const supabase = createClient();
@@ -18,7 +16,10 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
       if (sessionError || !session || !session.user) {
         console.error('Session tapılmadı və ya xətalıdır:', sessionError?.message);
@@ -27,7 +28,6 @@ export default function AuthCallbackPage() {
 
       const user = session.user;
 
- 
       const { data: existingProfile, error: profileError } = await supabase
         .from('user_profiles')
         .select('id')
@@ -42,15 +42,13 @@ export default function AuthCallbackPage() {
       if (!existingProfile) {
         const fullName = user.user_metadata?.full_name || 'Default Name';
 
-        const { error: insertError } = await supabase
-          .from('user_profiles')
-          .insert([
-            {
-              id: user.id,
-              full_name: fullName,
-              is_expert: false,
-            },
-          ]);
+        const { error: insertError } = await supabase.from('user_profiles').insert([
+          {
+            id: user.id,
+            full_name: fullName,
+            is_expert: false,
+          },
+        ]);
 
         if (insertError) {
           console.error('Profil əlavə olunarkən xəta:', insertError.message);
@@ -63,7 +61,17 @@ export default function AuthCallbackPage() {
       }
 
       const locale = getLocale();
-      router.push(`/${locale}/settings`);
+      const targetPath = `${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/settings`;
+      
+      try {
+        // router.push(`/${locale}/settings`); // Əgər SPA yönləndirmədirsə
+        window.location.href = targetPath; // Tam URL redirect üçün daha zəmanətli
+      } catch (err) {
+        console.error('Redirect zamanı xəta baş verdi:', err);
+      }
+      
+
+  
     };
 
     handleAuthCallback();
