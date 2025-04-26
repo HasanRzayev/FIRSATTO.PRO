@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false });
 
@@ -37,7 +38,8 @@ export default function InboxPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredReplies, setFilteredReplies] = useState<Reply[]>([]);
   const translate = useTranslations();
-  const locale = useLocale(); // burada locale təyin olunur
+  const locale = useLocale();
+  const router = useRouter(); // Initialize router
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const token = Cookie.get("sb-xildjwdpjcogmzuuotym-auth-token.0");
@@ -146,6 +148,10 @@ export default function InboxPage() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       setUserId(user?.id || null);
+
+      if (!user?.id) {
+        router.push("/sign-in"); // Redirect to sign-in page if user is not logged in
+      }
     };
 
     getUser();

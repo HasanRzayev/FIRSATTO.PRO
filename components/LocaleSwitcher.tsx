@@ -15,7 +15,7 @@ function FlagIcon({ countryCode = "" }: FlagIconProps) {
 
   return (
     <span
-      className={`fi fi-${countryCode} inline-block mr-2 rounded-full border-2 border-gray-200 bg-white w-[24px] h-[24px] text-[24px] shadow-inner`}
+      className={`fi fi-${countryCode} inline-block mr-2 rounded-full border-2 border-gray-200 bg-white w-[20px] h-[20px] text-[20px] shadow-inner`}
     />
   );
 }
@@ -63,15 +63,15 @@ export const LocaleSwitcher = () => {
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
-          className="inline-flex items-center justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center justify-center w-full rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           id={LANGUAGE_SELECTOR_ID}
           aria-haspopup="true"
           aria-expanded={isOpen}
         >
           <FlagIcon countryCode={currentLocale} />
-          {currentLocale.toUpperCase()}
+          <span className="hidden sm:inline-block ml-2 text-lg">{currentLocale.toUpperCase()}</span>
           <svg
-            className="-mr-1 ml-2 h-5 w-5"
+            className="-mr-1 ml-1 h-4 w-4"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -86,32 +86,31 @@ export const LocaleSwitcher = () => {
         </button>
 
         {isOpen && (
-  <div
-    className="origin-top-right absolute right-0 mt-2 w-48 sm:w-64 md:w-80 lg:w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
-    role="menu"
-    aria-orientation="vertical"
-    aria-labelledby="language-selector"
-  >
-    <div className="py-1 grid grid-cols-1 sm:grid-cols-2 gap-2" role="none">
-      {languages.map((language) => (
-        <button
-          key={language.key}
-          onClick={() => handleLanguageChange(language.key)}
-          className={`${
-            currentLocale === language.key
-              ? "bg-gray-100 text-gray-900"
-              : "text-gray-700"
-          } block px-4 py-2 text-sm text-left items-center inline-flex hover:bg-gray-100 w-full`}
-          role="menuitem"
-        >
-          <FlagIcon countryCode={language.key} />
-          <span className="truncate">{language.name}</span>
-        </button>
-      ))}
-    </div>
-  </div>
-)}
-
+          <div
+            className="origin-top-right absolute right-0 mt-1 w-48 sm:w-64 lg:w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="language-selector"
+          >
+            <div className="py-1 grid grid-cols-1 sm:grid-cols-2 gap-2" role="none">
+              {languages.map((language) => (
+                <button
+                  key={language.key}
+                  onClick={() => handleLanguageChange(language.key)}
+                  className={`${
+                    currentLocale === language.key
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-700"
+                  } block px-4 py-2 text-lg text-left items-center inline-flex hover:bg-gray-100 w-full`}
+                  role="menuitem"
+                >
+                  <FlagIcon countryCode={language.key} />
+                  <span className="hidden sm:inline-block ml-3 truncate text-lg">{language.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

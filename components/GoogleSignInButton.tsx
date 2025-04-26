@@ -13,6 +13,8 @@ export default function GoogleSignInButton({ label = 'Google ilə Daxil Ol' }) {
 
  
   const signInWithGoogle = async () => {
+
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

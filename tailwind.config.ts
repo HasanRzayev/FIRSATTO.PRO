@@ -3,11 +3,11 @@ import type { Config } from "tailwindcss";
 const config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    './node_modules/flowbite/**/*.js', // Flowbite komponentləri üçün
-    './src/**/*.{html,js,jsx,ts,tsx}', // Layihənin komponentləri
+    "./pages/**/*.{ts,tsx}",        // Sayfa bileşenleri
+    "./components/**/*.{ts,tsx}",    // Bileşenler
+    "./app/**/*.{ts,tsx}",           // Uygulama dizini (Next.js için)
+    './node_modules/flowbite/**/*.js', // Flowbite komponentleri için
+    './src/**/*.{html,js,jsx,ts,tsx}', // Genel kaynak dosyalar
   ],
   prefix: "",
   theme: {

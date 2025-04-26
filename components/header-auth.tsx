@@ -18,6 +18,7 @@ import {
 
 export default function AuthButton() {
   const [user, setUser] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const pathname = usePathname()
   const locale = pathname?.split('/')[1] || 'az'; 
@@ -32,39 +33,58 @@ export default function AuthButton() {
     };
 
     fetchUser();
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 750);
+    };
+
+    handleResize(); // İlk dəfə səhifə yüklənəndə yoxlayırıq
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (!hasEnvVars) {
-    return (
-      <div className="flex gap-4 items-center">
-        <Badge variant="default" className="font-normal pointer-events-none">
-          Please update .env.local with anon key and url
-        </Badge>
-        <div className="flex gap-2">
-          <Button asChild size="sm" variant="outline" disabled>
-          <Link href={`/${locale}/sign-in`}>Sign in</Link>
-          </Button>
-          <Button asChild size="sm" variant="default" disabled>
-          <Link href={`/${locale}/sign-up`}>Sign up</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // ... əvvəlki kod eyni qalır
 
-  if (!user) {
-    return (
+if (!hasEnvVars) {
+  return (
+    <div className="flex gap-4 items-center">
+      <Badge variant="default" className="font-normal pointer-events-none">
+        Please update .env.local with anon key and url
+      </Badge>
       <div className="flex gap-2">
-    <Button asChild size="sm" variant="outline">
+        <Button asChild size="sm" variant="outline" className="pr-2">
+          <Link href={`/${locale}/sign-in`}>Sign in</Link>
+        </Button>
+        {!isMobile && (
+          <Button asChild size="sm" variant="default" className="pr-2">
+            <Link href={`/${locale}/sign-up`}>Sign up</Link>
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+if (!user) {
+  return (
+    <div className="flex gap-2">
+      <Button asChild size="sm" variant="outline" className="pr-2">
         <Link href={`/${locale}/sign-in`}>Sign in</Link>
       </Button>
-      <Button asChild size="sm" variant="default">
-        <Link href={`/${locale}/sign-up`}>Sign up</Link>
-      </Button>
-      </div>
-    );
-  }
+      {!isMobile && (
+        <Button asChild size="sm" variant="default" className="pr-2">
+          <Link href={`/${locale}/sign-up`}>Sign up</Link>
+        </Button>
+      )}
+    </div>
+  );
+}
 
+// ... qalan kod dəyişməyəcək
+
+
+  // user varsa, Dropdown göstəririk (dəyişməyə ehtiyac yoxdur)
   const avatarUrl = user.user_metadata?.avatar_url;
   const nameInitial = user.email?.[0]?.toUpperCase() || "U";
 
@@ -87,10 +107,10 @@ export default function AuthButton() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem asChild>
-        <Link href={`/${locale}/profile`}>Profile</Link>
+          <Link href={`/${locale}/profile`}>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-        <Link href={`/${locale}/settings`}>Settings</Link>
+          <Link href={`/${locale}/settings`}>Settings</Link>
         </DropdownMenuItem>
         <form action={signOutAction}>
           <DropdownMenuItem asChild>

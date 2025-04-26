@@ -50,7 +50,7 @@ const SavedAdsPage: React.FC = () => {
     } = await supabase.auth.getSession();
 
     if (!session?.user?.id) {
-      router.push('/login');
+      router.push('/sign-in');
       return;
     }
 
