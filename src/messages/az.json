@@ -146,6 +146,10 @@
   "signuppasswordplaceholder": "Şifrənizi daxil edin",
   "signuppending": "Qeydiyyat olunur...",
   "signupbutton": "Qeydiyyatdan keç",
-  "signupgoogle": "Google ilə qeydiyyat"
+  "signupgoogle": "Google ilə qeydiyyat",
+  "menu": "Menyu",
+  "emojiPickerButton": "Emoji Seçici"
+
+
 
 }

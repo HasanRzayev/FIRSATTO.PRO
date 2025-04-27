@@ -146,5 +146,9 @@
   "signuppasswordplaceholder": "Ваш пароль",
   "signuppending": "Регистрация...",
   "signupbutton": "Зарегистрироваться",
-  "signupgoogle": "Зарегистрироваться с Google"
+  "signupgoogle": "Зарегистрироваться с Google",
+  "menu": "Меню",
+  "emojiPickerButton": "Выбор эмодзи"
+
+
 }

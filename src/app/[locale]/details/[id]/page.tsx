@@ -28,7 +28,7 @@ import { useTranslations, useLocale } from 'next-intl';
   price: string;
   user: {
     id: string;
-    userName: string;
+    full_name: string;
   };
   comments: Comment[];
 }
@@ -38,6 +38,7 @@ async function getAdById(id: string, locale: string): Promise<Ad | null> {
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
+    console.log(data)
     return data;
   } catch (error) {
     console.error("❌ Failed to fetch ad:", error);
@@ -206,7 +207,6 @@ const CommentArea = ({
     </div>
   );
 };
-
 const DetailPage = () => {
   const pathname = usePathname();
   const id = pathname ? pathname.split("/").pop() : null;
@@ -229,45 +229,65 @@ const DetailPage = () => {
     }
   }, [id, locale]);
   
-
   useEffect(() => {
     setCurrentUser({ id: "user123" }); 
   }, []);
 
   if (!id || id.length < 10) {
-    return <div className="p-6 text-red-600">{t("carddetailsinvalidorincompleteadlink")}</div>;
+    return (
+      <div className="p-8 text-center text-red-500 text-xl font-semibold">
+        {t("carddetailsinvalidorincompleteadlink")}
+      </div>
+    );
   }
 
   if (!ad) {
-    return <div className="p-6 text-red-600 text-lg">{t("carddetailsadnotfound")}</div>;
+    return (
+      <div className="p-8 text-center text-red-500 text-xl font-semibold">
+        {t("carddetailsadnotfound")}
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-indigo-600">{ad.title}</h1>
-      <p className="text-md sm:text-lg text-gray-700">{ad.description}</p>
+    <div className="max-w-6xl mx-auto p-6 sm:p-10 space-y-12">
+    {/* Main Content */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-3xl shadow-2xl">
+      {/* Left Side - Carousel */}
+      <div className="w-full">
+        {ad.image_urls?.length > 0 && (
+          <ImageCarousel images={ad.image_urls as string[]} />
+        )}
 
-      <div className="grid sm:grid-cols-2 gap-4 text-sm mt-4">
-        <p><strong>{t("carddetailscategory")}:</strong> {ad.category}</p>
-        <p><strong>{t("carddetailsprice")}:</strong> {ad.price} USD</p>
-        <p><strong>{t("carddetailslocation")}:</strong> {ad.location}</p>
-        <p><strong>{t("carddetailspostedby")}:</strong> {ad.user?.userName || "N/A"}</p>
+        {ad.video_urls?.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-2 text-gray-800">{t("carddetailsvideo")}</h3>
+            <video controls className="w-full rounded-lg shadow-md">
+              <source src={ad.video_urls[0]} type="video/mp4" />
+              {t("carddetailsyourbrowserdoesnotsupportvideotag")}
+            </video>
+          </div>
+        )}
       </div>
 
-      {ad.image_urls?.length > 0 && (
-  <ImageCarousel images={ad.image_urls as string[]} />
-)}
-
-      {ad.video_urls?.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">{t("carddetailsvideo")}</h3>
-          <video controls className="w-full rounded-lg shadow">
-            <source src={ad.video_urls[0]} type="video/mp4" />
-            {t("carddetailsyourbrowserdoesnotsupportvideotag")}
-          </video>
+      {/* Right Side - Ad Details */}
+      <div className="flex flex-col justify-center space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold text-indigo-700">{ad.title}</h1>
+          <p className="text-lg text-gray-600">{ad.description}</p>
         </div>
-      )}
 
+        <div className="space-y-2 text-gray-700 text-base">
+          <p><span className="font-semibold">{t("carddetailscategory")}:</span> {ad.category}</p>
+          <p><span className="font-semibold">{t("carddetailsprice")}:</span> {ad.price} USD</p>
+          <p><span className="font-semibold">{t("carddetailslocation")}:</span> {ad.location}</p>
+          <p><span className="font-semibold">{t("carddetailspostedby")}:</span> {ad.user?.full_name || "N/A"}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Comments Section */}
+    <div className="bg-white p-6 rounded-3xl shadow-2xl space-y-8">
       {currentUser && (
         <CommentArea
           comments={comments}
@@ -284,7 +304,8 @@ const DetailPage = () => {
         setComments={setComments}
       />
     </div>
-  );
+  </div>
+);
 };
 
 export default DetailPage;

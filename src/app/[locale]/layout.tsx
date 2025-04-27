@@ -34,30 +34,22 @@ export default async function LocaleLayout({
       <head>
         <ThemeModeScript />
       </head>
-      <body className="bg-background text-foreground">
+      <body className="bg-[#F0F8FF] text-foreground">
         <NextIntlClientProvider locale={locale} messages={messages}>
-<header className="w-full flex justify-center border-b border-b-foreground/10 h-auto bg-[#1E90FF] sticky top-0 z-50">
-        <div className="w-full max-w-5xl flex justify-between items-center px-5 text-sm">
-    <Link href={`/${locale}`} className="font-semibold text-white text-base">
-      FIRSATTO
-    </Link>
-    <Navigation locale={locale} />
-    <div className="flex items-center gap-4 ml-auto"> {/* Flex container to align items */}
-      <UnreadReplyCount />
-      <SaveIconButton /> {/* SaveIconButton next to UnreadReplyCount */}
-      <LocaleSwitcher />
-      <HeaderAuth />
-    </div>
-  </div>
-</header>
-
-
-
-
-
-
-
-
+          <header className="w-full flex justify-center border-b border-b-foreground/10 h-20 bg-[#1E90FF] sticky top-0 z-50">
+            <div className="w-full max-w-5xl flex justify-between items-center px-5 text-sm">
+              <Link href={`/${locale}`} className="font-semibold text-white text-base">
+                FIRSATTO
+              </Link>
+              <Navigation locale={locale} />
+              <div className="flex items-center gap-4 ml-auto"> {/* Flex container to align items */}
+                <UnreadReplyCount />
+                <SaveIconButton /> {/* SaveIconButton next to UnreadReplyCount */}
+                <LocaleSwitcher />
+                <HeaderAuth />
+              </div>
+            </div>
+          </header>
 
           <main className="w-full max-w-5xl mx-auto p-5">{children}</main>
 

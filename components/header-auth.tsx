@@ -91,19 +91,20 @@ if (!user) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="cursor-pointer">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt="Avatar"
-              className="w-8 h-8 rounded-full object-cover border"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
-              {nameInitial}
-            </div>
-          )}
-        </div>
+      <div className="cursor-pointer">
+  {avatarUrl ? (
+    <img
+      src={avatarUrl}
+      alt="Avatar"
+      className="w-8 h-8 rounded-full object-cover border"
+    />
+  ) : (
+    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold leading-none">
+      {nameInitial}
+    </div>
+  )}
+</div>
+
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem asChild>
