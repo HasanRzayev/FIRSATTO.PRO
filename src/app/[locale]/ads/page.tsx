@@ -26,6 +26,24 @@ export default function CreateAdPage() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.log("Error getting session", error);
+        return;
+      }
+
+      if (!session) {
+        // İstifadəçi daxil olmayıbsa, login səhifəsinə yönləndir
+        router.push("/sign-in");
+      } else {
+        // İstifadəçi daxil olubsa, ana səhifəyə yönləndir
+        router.push("/dashboard");
+      }
+    };
+
+    checkUser();
     const selected = locationData.find((item) => item.country === country);
     setCities(selected ? selected.cities : []);
     setCity("");
