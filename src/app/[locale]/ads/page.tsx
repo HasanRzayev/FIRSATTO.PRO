@@ -138,7 +138,7 @@ export default function CreateAdPage() {
           category: filterProfanity(category),
           image_urls: imageUrls,
           video_urls: videoUrl ? [videoUrl] : [],
-          location: `${country} - ${city}`,
+          location: `${country}, ${city}`,
           price,
         })
         .select();
@@ -165,14 +165,14 @@ export default function CreateAdPage() {
           placeholder={t("detailstitle")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 w-full rounded"
+          className="border p-2 w-full rounded placeholder-black"
           required
         />
 
 <textarea
   placeholder={t("detailsdescription")}
   onChange={(e) => setDescription(e.target.value)}
-  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+  className=" placeholder-black block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
   rows={4}
   required
 />
@@ -250,7 +250,7 @@ export default function CreateAdPage() {
         <input
           type="number"
           id="currency-input"
-          className="block p-2.5 w-full z-20 pl-10 text-sm text-gray-900 bg-gray-50 rounded-s-lg border-e-gray-50 border-e-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-e-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+          className=" placeholder-black block p-2.5 w-full z-20 pl-10 text-sm text-gray-900 bg-gray-50 rounded-s-lg border-e-gray-50 border-e-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-e-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
           placeholder="Enter amount"
           value={price}
           onChange={(e) => setPrice(e.target.value)}

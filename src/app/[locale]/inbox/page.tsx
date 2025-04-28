@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Cookie from "js-cookie";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -37,25 +36,25 @@ export default function InboxPage() {
   const [displayCount, setDisplayCount] = useState(4);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredReplies, setFilteredReplies] = useState<Reply[]>([]);
+  const [token, setToken] = useState<string | null>(null);
   const translate = useTranslations();
   const locale = useLocale();
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const token = Cookie.get("sb-xildjwdpjcogmzuuotym-auth-token.0");
 
-  const fetchReplies = async () => {
-    if (!token) {
+  const fetchReplies = async (authToken: string) => {
+    if (!authToken) {
       console.log("Unauthorized: Token not found");
       return;
     }
 
     try {
-      const res = await fetch(`${baseUrl}/api/comments/inbox`, {
+      const res = await fetch(`${baseUrl}/${locale}/api/comments/inbox`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
@@ -71,15 +70,18 @@ export default function InboxPage() {
       const uniqueReplies = Array.from(
         new Map(data.map((r: Reply) => [r.id, r])).values()
       ) as Reply[];
-      
+
       setReplies(uniqueReplies);
       setLoading(false);
 
       const unreadIds = uniqueReplies.filter(r => !r.is_read).map(r => r.id);
       if (unreadIds.length > 0) {
-        await fetch(`${baseUrl}/api/comments/inbox`, {
+        await fetch(`${baseUrl}/${locale}/api/comments/inbox`, {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
           body: JSON.stringify({ ids: unreadIds }),
         });
       }
@@ -98,6 +100,11 @@ export default function InboxPage() {
 
     if (!text || !commentId || !adId) {
       alert(translate("inboxerrorText"));
+      return;
+    }
+
+    if (!token) {
+      console.log("Unauthorized: Token not available");
       return;
     }
 
@@ -125,7 +132,7 @@ export default function InboxPage() {
       }
 
       setReplyTextMap((prev) => ({ ...prev, [commentId]: "" }));
-      fetchReplies();
+      fetchReplies(token);
     } catch (error) {
       console.error(translate("inboxerrorSending"), error);
     }
@@ -144,18 +151,26 @@ export default function InboxPage() {
   };
 
   useEffect(() => {
-    const getUser = async () => {
+    const initialize = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
+      const { data: sessionData } = await supabase.auth.getSession();
+
+      const accessToken = sessionData?.session?.access_token ?? null;
+      setToken(accessToken);
       setUserId(user?.id || null);
 
       if (!user?.id) {
-        router.push("/sign-in"); // Redirect to sign-in page if user is not logged in
+        router.push("/sign-in");
+        return;
+      }
+
+      if (accessToken) {
+        fetchReplies(accessToken);
       }
     };
 
-    getUser();
-    fetchReplies();
+    initialize();
   }, []);
 
   useEffect(() => {

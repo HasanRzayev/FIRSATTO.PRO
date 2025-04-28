@@ -136,13 +136,13 @@ const CommentArea = ({
   return (
     <div className="mt-10">
       <h3 className="text-2xl font-bold mb-6 text-gray-800">{t("carddetailscomments")}</h3>
-
+  
       {comments.length === 0 ? (
         <p className="text-gray-400 text-lg">{t("carddetailsnocomments")}</p>
       ) : (
         <div
           ref={commentAreaRef}
-          className="max-h-[500px] overflow-y-auto space-y-6"
+          className="max-h-[700px] overflow-y-auto space-y-6"
         >
           {comments.map((comment) => (
             <div
@@ -155,14 +155,14 @@ const CommentArea = ({
                 </span>{" "}
                 <span className="text-gray-600">{t("carddetailssaid")}</span> {comment.content}
               </p>
-
+  
               <button
                 onClick={() => handleReplyClick(comment.id)}
                 className="text-sm text-blue-600 hover:underline"
               >
                 {t("carddetailsreply")}
               </button>
-
+  
               {activeReplyCommentId === comment.id && (
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
                   <input
@@ -180,7 +180,7 @@ const CommentArea = ({
                   </button>
                 </div>
               )}
-
+  
               {comment.replies && comment.replies.length > 0 && (
                 <div className="mt-5 pl-4 border-l-2 border-blue-100 space-y-3">
                   {comment.replies.map((reply) => (
@@ -198,7 +198,7 @@ const CommentArea = ({
               )}
             </div>
           ))}
-
+  
           {loading && (
             <p className="text-center text-gray-500 text-sm">{t("carddetailsloadingmorecomments")}</p>
           )}
@@ -206,6 +206,7 @@ const CommentArea = ({
       )}
     </div>
   );
+  
 };
 const DetailPage = () => {
   const pathname = usePathname();
@@ -248,64 +249,63 @@ const DetailPage = () => {
       </div>
     );
   }
-
   return (
-    <div className="max-w-6xl mx-auto p-6 sm:p-10 space-y-12">
-    {/* Main Content */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-3xl shadow-2xl">
-      {/* Left Side - Carousel */}
-      <div className="w-full">
-        {ad.image_urls?.length > 0 && (
-          <ImageCarousel images={ad.image_urls as string[]} />
-        )}
+    <div className="max-w-6xl mx-auto p-6 sm:p-10 space-y-12 min-w-[320px]">
+      {/* Main Content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 sm:p-10 rounded-3xl shadow-2xl min-w-[300px]">
+        {/* Left Side - Carousel */}
+        <div className="w-full">
+          {ad.image_urls?.length > 0 && (
+            <ImageCarousel images={ad.image_urls as string[]} />
+          )}
 
-        {ad.video_urls?.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2 text-gray-800">{t("carddetailsvideo")}</h3>
-            <video controls className="w-full rounded-lg shadow-md">
-              <source src={ad.video_urls[0]} type="video/mp4" />
-              {t("carddetailsyourbrowserdoesnotsupportvideotag")}
-            </video>
+          {ad.video_urls?.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-2 text-gray-800 break-words">{t("carddetailsvideo")}</h3>
+              <video controls className="w-full rounded-lg shadow-md">
+                <source src={ad.video_urls[0]} type="video/mp4" />
+                {t("carddetailsyourbrowserdoesnotsupportvideotag")}
+              </video>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side - Ad Details */}
+        <div className="flex flex-col justify-center space-y-6 min-w-[300px] break-words">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-indigo-700 break-words">{ad.title}</h1>
+            <p className="text-lg text-gray-600 break-words">{ad.description}</p>
           </div>
+
+          <div className="space-y-2 text-gray-700 text-base break-words">
+            <p><span className="font-semibold">{t("carddetailscategory")}:</span> {ad.category}</p>
+            <p><span className="font-semibold">{t("carddetailsprice")}:</span> {ad.price} USD</p>
+            <p><span className="font-semibold">{t("carddetailslocation")}:</span> {ad.location}</p>
+            <p><span className="font-semibold">{t("carddetailspostedby")}:</span> {ad.user?.full_name || "N/A"}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="bg-white p-6 rounded-3xl shadow-2xl space-y-8 min-w-[300px]">
+        {currentUser && (
+          <CommentArea
+            comments={comments}
+            setComments={setComments}
+            currentUser={ad.user}
+            adId={ad.id}
+          />
         )}
-      </div>
 
-      {/* Right Side - Ad Details */}
-      <div className="flex flex-col justify-center space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-indigo-700">{ad.title}</h1>
-          <p className="text-lg text-gray-600">{ad.description}</p>
-        </div>
-
-        <div className="space-y-2 text-gray-700 text-base">
-          <p><span className="font-semibold">{t("carddetailscategory")}:</span> {ad.category}</p>
-          <p><span className="font-semibold">{t("carddetailsprice")}:</span> {ad.price} USD</p>
-          <p><span className="font-semibold">{t("carddetailslocation")}:</span> {ad.location}</p>
-          <p><span className="font-semibold">{t("carddetailspostedby")}:</span> {ad.user?.full_name || "N/A"}</p>
-        </div>
-      </div>
-    </div>
-
-    {/* Comments Section */}
-    <div className="bg-white p-6 rounded-3xl shadow-2xl space-y-8">
-      {currentUser && (
-        <CommentArea
+        <CommentSection
+          adId={ad.id}
+          userId={ad.user.id}
           comments={comments}
           setComments={setComments}
-          currentUser={ad.user}
-          adId={ad.id}
         />
-      )}
-
-      <CommentSection
-        adId={ad.id}
-        userId={ad.user.id}
-        comments={comments}
-        setComments={setComments}
-      />
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default DetailPage;

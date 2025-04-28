@@ -124,7 +124,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
             <a
-              href="#"
+              href="/ads"
               className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
             >
               {t('List an Ad')}
@@ -145,7 +145,7 @@ export default function HomePage() {
               </svg>
             </a>
             <a
-              href="#"
+              href="/about"
               className="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400"
             >
               {t('Learn More')}
@@ -157,79 +157,78 @@ export default function HomePage() {
       <h1 className="text-4xl font-extrabold mb-6 text-center text-[#2F4F4F]">
         {t('All Announcements')}
       </h1>
+{/* 🔍 Search and Filters */}
+<div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10 max-w-5xl mx-auto bg-white p-4 rounded-lg shadow-md">
+  {/* Axtarış */}
+  <input
+    type="text"
+    placeholder={t('keywords')}
+    value={searchTerm}
+    onChange={(e) => {
+      setSearchTerm(e.target.value);
+      setPage(1);
+    }}
+    className="col-span-1 md:col-span-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-400 text-black placeholder-black"
+  />
 
-      {/* 🔍 Search and Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10 max-w-5xl mx-auto bg-white p-4 rounded-lg shadow-md">
-        {/* Axtarış */}
-        <input
-          type="text"
-          placeholder={t('keywords')}
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setPage(1);
-          }}
-          className="col-span-1 md:col-span-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-400"
-        />
+  {/* Ölkə seçimi */}
+  <select
+    value={selectedCountry}
+    onChange={(e) => {
+      setSelectedCountry(e.target.value);
+      setPage(1);
+    }}
+    className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-black"
+  >
+    <option value="">{t('country')}</option>
+    {countriesWithCities.map(({ country, city }, index) => (
+      <option key={index} value={`${country}, ${city}`}>
+        {country}, {city}
+      </option>
+    ))}
+  </select>
 
-        {/* Ölkə seçimi */}
-        <select
-          value={selectedCountry}
-          onChange={(e) => {
-            setSelectedCountry(e.target.value);
-            setPage(1);
-          }}
-          className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
-        >
-          <option value="">{t('country')}</option>
-          {countriesWithCities.map(({ country, city }, index) => (
-            <option key={index} value={`${country}, ${city}`}>
-              {country}, {city}
-            </option>
-          ))}
-        </select>
+  {/* Kategoriya seçimi */}
+  <select
+    value={selectedCategory}
+    onChange={(e) => {
+      setSelectedCategory(e.target.value);
+      setPage(1);
+    }}
+    className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-black"
+  >
+    <option value="">{t('catagory')}</option>
+    {categories?.map((cat) => (
+      <option key={cat.name} value={cat.slug}>
+        {cat.name}
+      </option>
+    ))}
+  </select>
 
-        {/* Kategoriya seçimi */}
-        <select
-          value={selectedCategory}
-          onChange={(e) => {
-            setSelectedCategory(e.target.value);
-            setPage(1);
-          }}
-          className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm"
-        >
-          <option value="">{t('catagory')}</option>
-          {categories?.map((cat) => (
-            <option key={cat.name} value={cat.slug}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-
-        {/* Qiymət aralığı */}
-        <div className="flex gap-2">
-          <input
-            type="number"
-            placeholder={`${t('minimum')}`}
-            value={minPrice}
-            onChange={(e) => {
-              setMinPrice(e.target.value);
-              setPage(1);
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          />
-          <input
-            type="number"
-            placeholder={`${t('maximum')}`}
-            value={maxPrice}
-            onChange={(e) => {
-              setMaxPrice(e.target.value);
-              setPage(1);
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-      </div>
+  {/* Qiymət aralığı */}
+  <div className="flex gap-2">
+    <input
+      type="number"
+      placeholder={`${t('minimum')}`}
+      value={minPrice}
+      onChange={(e) => {
+        setMinPrice(e.target.value);
+        setPage(1);
+      }}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black placeholder-black"
+    />
+    <input
+      type="number"
+      placeholder={`${t('maximum')}`}
+      value={maxPrice}
+      onChange={(e) => {
+        setMaxPrice(e.target.value);
+        setPage(1);
+      }}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black placeholder-black"
+    />
+  </div>
+</div>
 
       {/* 📦 Cards */}
       {ads.length === 0 && !loading ? (
