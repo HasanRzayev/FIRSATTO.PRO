@@ -37,10 +37,7 @@ export default function CreateAdPage() {
       if (!session) {
         // İstifadəçi daxil olmayıbsa, login səhifəsinə yönləndir
         router.push("/sign-in");
-      } else {
-        // İstifadəçi daxil olubsa, ana səhifəyə yönləndir
-        router.push("/dashboard");
-      }
+      } 
     };
 
     checkUser();

@@ -69,7 +69,7 @@ export default function GoogleSignInButton({ label = 'Google ilə Daxil Ol' }) {
         }
 
         // Yönləndirmə URL-ə locale parametri əlavə edilərək edilir
-        router.push(`/${locale}/dashboard`);
+        router.push(`/${locale}/settings`);
       }
     }, 1000);
   };
