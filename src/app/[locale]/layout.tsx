@@ -13,7 +13,15 @@ import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
 import { getMessages } from "next-intl/server";
 import "./globals.css";
+import { Metadata } from 'next'
 
+export const metadata: Metadata = {
+  title: 'Sizin Sayt',
+  description: 'Sizin təsvir',
+  verification: {
+    google: 'sxvnxLsm1HWt9Tt2BY0wDTE21XrGVpXzZJ7PDurB660'
+  }
+}
 export default async function LocaleLayout({
   children,
   params,
