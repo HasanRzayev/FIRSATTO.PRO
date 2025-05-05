@@ -1,12 +1,11 @@
+// pages/_document.js
 import { Html, Head, Main, NextScript } from 'next/document';
-import { ThemeModeScript } from 'flowbite-react';
 
 export default function Document() {
   return (
-    <Html suppressHydrationWarning>
+    <Html>
       <Head>
-        {/* Include any custom head content here */}
-        <ThemeModeScript />
+        <meta name="google-site-verification" content="sxvnxLsm1HWt9Tt2BY0wDTE21XrGVpXzZJ7PDurB660" />
       </Head>
       <body>
         <Main />
