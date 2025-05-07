@@ -16,8 +16,8 @@ import "./globals.css";
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Sizin Sayt',
-  description: 'Sizin təsvir',
+  title: 'Firsatto',
+  description: 'Firsatto',
   verification: {
     google: 'sxvnxLsm1HWt9Tt2BY0wDTE21XrGVpXzZJ7PDurB660'
   }
