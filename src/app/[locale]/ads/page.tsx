@@ -260,7 +260,7 @@ export default function CreateAdPage() {
     </label>
     <div className="relative w-full">
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <span className="text-gray-500 dark:text-gray-400">$</span>
+            <span className="text-gray-500 dark:text-gray-400">₼</span>
         </div>
         <input
           type="number"
