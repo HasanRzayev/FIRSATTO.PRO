@@ -106,21 +106,24 @@ if (!user) {
 </div>
 
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem asChild>
-          <Link href={`/${locale}/profile`}>Profile</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href={`/${locale}/settings`}>Settings</Link>
-        </DropdownMenuItem>
-        <form action={signOutAction}>
-          <DropdownMenuItem asChild>
-            <button type="submit" className="w-full text-left">
-              Sign out
-            </button>
-          </DropdownMenuItem>
-        </form>
-      </DropdownMenuContent>
+<DropdownMenuContent align="end" className="w-40">
+  <DropdownMenuItem asChild>
+    <Link href={`/${locale}/profile`}>Profile</Link>
+  </DropdownMenuItem>
+  <DropdownMenuItem asChild>
+    <Link href={`/${locale}/settings`}>Settings</Link>
+  </DropdownMenuItem>
+  <DropdownMenuItem
+    onClick={async () => {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push(`/${locale}/sign-in`);
+    }}
+  >
+    Sign out
+  </DropdownMenuItem>
+</DropdownMenuContent>
+
     </DropdownMenu>
   );
 }
