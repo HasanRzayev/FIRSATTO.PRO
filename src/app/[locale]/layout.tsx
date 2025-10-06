@@ -47,7 +47,7 @@ export default async function LocaleLayout({
           <header className="w-full glass-effect border-b border-white/20 h-20 sticky top-0 z-50 shadow-lg">
             <div className="container-max flex justify-between items-center px-6 h-full">
               <Link href={`/${locale}`} className="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                FIRSATTO
+                🚴 FIRSATTO
               </Link>
               <Navigation locale={locale} />
               <div className="flex items-center gap-3">
@@ -66,10 +66,10 @@ export default async function LocaleLayout({
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div className="col-span-1 md:col-span-2">
                   <h3 className="font-bold text-2xl mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    FIRSATTO
+                    🚴 FIRSATTO
                   </h3>
                   <p className="text-gray-300 mb-4">
-                    Your trusted marketplace for buying and selling. Connect with people worldwide and discover amazing opportunities.
+                    The ultimate bicycle marketplace. Buy, sell, and trade bikes worldwide. Connect with cycling enthusiasts and discover amazing bicycles.
                   </p>
                   <div className="flex space-x-4">
                     <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors cursor-pointer">

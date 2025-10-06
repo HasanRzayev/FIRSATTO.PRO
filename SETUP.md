@@ -91,3 +91,4 @@ Eğer Supabase projeniz yoksa:
 ## 📞 Support
 
 Herhangi bir sorun yaşarsanız, lütfen GitHub Issues bölümünde sorun bildirin.
+

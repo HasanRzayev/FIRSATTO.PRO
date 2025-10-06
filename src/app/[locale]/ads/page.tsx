@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import locationData from '../data/locationData';
 import { categories } from '../data/categories';
 import { useTranslations } from 'next-intl';
+import { validateBicycleContent } from '@/utils/gemini-validation';
 
 const badWords = ["sex", "porn", "fuck", "xxx", "18+", "nude", "naked", "sikiş", "amcıq", "sik", "orospu", "analsex"];
 
@@ -24,6 +25,8 @@ export default function CreateAdPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [validating, setValidating] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -110,7 +113,7 @@ export default function CreateAdPage() {
     return badWords.some((word) => lowerName.includes(word));
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     if (!title || !description || !category || !country || !city || !price) {
       alert("Please fill in all fields.");
       return false;
@@ -126,12 +129,61 @@ export default function CreateAdPage() {
       return false;
     }
 
+    // AI validation for bicycle content
+    setValidating(true);
+    setValidationError(null);
+
+    try {
+      // Convert files to base64 for validation
+      const imageUrls: string[] = [];
+      for (const file of imageFiles) {
+        const base64 = await fileToBase64(file);
+        imageUrls.push(base64);
+      }
+
+      const videoUrls: string[] = [];
+      if (videoFile) {
+        const base64 = await fileToBase64(videoFile);
+        videoUrls.push(base64);
+      }
+
+      const validation = await validateBicycleContent(title, description, imageUrls, videoUrls);
+
+      if (!validation.isValid) {
+        setValidationError(validation.message);
+        alert(`❌ ${validation.message}\n\nPlease ensure your content is related to bicycles/bikes only.`);
+        setValidating(false);
+        return false;
+      }
+
+      setValidating(false);
     return true;
+    } catch (error) {
+      console.error('Validation error:', error);
+      setValidationError("AI validation failed. Please try again.");
+      setValidating(false);
+      return false;
+    }
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove the data:image/jpeg;base64, prefix
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = error => reject(error);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    const isValid = await validateForm();
+    if (!isValid) return;
 
     setUploading(true);
 
@@ -195,280 +247,309 @@ export default function CreateAdPage() {
         <div className="container-max">
           <div className="max-w-4xl mx-auto">
             <div className="glass-effect rounded-2xl p-8 shadow-xl">
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="text-lg font-semibold text-blue-800">🚴 Bicycle Marketplace</h3>
+                </div>
+                <p className="text-blue-700 text-sm">
+                  This marketplace is exclusively for bicycles and cycling-related items. Content will be validated to ensure it's bicycle-related.
+                </p>
+              </div>
+
+              {validationError && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-red-700 font-medium">Validation Error</p>
+                  </div>
+                  <p className="text-red-600 text-sm mt-1">{validationError}</p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     {t("detailstitle")}
                   </label>
-                  <input
-                    type="text"
-                    placeholder={t("detailstitle")}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+        <input
+          type="text"
+          placeholder={t("detailstitle")}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
                     className="input-field"
-                    required
-                  />
+          required
+        />
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     {t("detailsdescription")}
                   </label>
-                  <textarea
-                    placeholder={t("detailsdescription")}
-                    onChange={(e) => setDescription(e.target.value)}
+        <textarea
+          placeholder={t("detailsdescription")}
+          onChange={(e) => setDescription(e.target.value)}
                     className="input-field resize-none"
-                    rows={4}
-                    required
-                  />
+          rows={4}
+          required
+        />
                 </div>
 
                 <div>
                   <label htmlFor="category-options" className="block text-sm font-semibold text-gray-700 mb-2">
-                    {t("detailscategory")}
-                  </label>
-                  <select
-                    id="category-options"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+            {t("detailscategory")}
+          </label>
+          <select
+            id="category-options"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
                     className="input-field"
-                    required
-                  >
-                    <option value="">{t("detailscategory")}</option>
-                    {categories?.map((cat) => (
-                      <option key={cat.name} value={cat.slug}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            required
+          >
+            <option value="">{t("detailscategory")}</option>
+            {categories?.map((cat) => (
+              <option key={cat.name} value={cat.slug}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+          <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">{t("detailscountry")}</label>
-                    <select
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
                       className="input-field"
-                      required
-                    >
+              required
+            >
                       <option value="">Select Country</option>
-                      {locationData.map((item) => (
-                        <option key={item.country} value={item.country}>
-                          {item.country}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              {locationData.map((item) => (
+                <option key={item.country} value={item.country}>
+                  {item.country}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                  <div>
+          <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">{t("detailscity")}</label>
-                    <select
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
                       className="input-field"
-                      required
-                      disabled={!cities.length}
-                    >
+              required
+              disabled={!cities.length}
+            >
                       <option value="">Select City</option>
-                      {cities.map((city) => (
-                        <option key={city} value={city}>
-                          {city}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+              {cities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
                 <div>
                   <label htmlFor="currency-input" className="block text-sm font-semibold text-gray-700 mb-2">
                     Price (USD)
-                  </label>
+        </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                       <span className="text-gray-500 font-medium">$</span>
-                    </div>
-                    <input
-                      type="number"
-                      id="currency-input"
+          </div>
+          <input
+            type="number"
+            id="currency-input"
                       className="input-field pl-10"
-                      placeholder="Enter amount"
-                      value={price}
-                      onChange={(e) => setPrice(e.target.value)}
-                      required
-                    />
+            placeholder="Enter amount"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
                   </div>
-                </div>
+        </div>
 
-                <div>
+        <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">{t("detailsimages")}</label>
 
-                  {imageFiles.length < 5 && (
-                    <div className="flex items-center justify-center w-full">
-                      <label
-                        htmlFor="dropzone-file"
+          {imageFiles.length < 5 && (
+            <div className="flex items-center justify-center w-full">
+              <label
+                htmlFor="dropzone-file"
                         className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          const files = Array.from(e.dataTransfer.files);
-                          const imageFilesOnly = files.filter(file => file.type.startsWith('image/'));
-                    
-                          const totalImages = imageFiles.length + imageFilesOnly.length;
-                          if (totalImages > 5) {
-                            alert("Maksimum 5 şəkil əlavə edə bilərsiniz.");
-                            return;
-                          }
-                    
-                          setImageFiles(prev => [...prev, ...imageFilesOnly]);
-                        }}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                        }}
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const files = Array.from(e.dataTransfer.files);
+                  const imageFilesOnly = files.filter(file => file.type.startsWith('image/'));
+            
+                  const totalImages = imageFiles.length + imageFilesOnly.length;
+                  if (totalImages > 5) {
+                    alert("Maksimum 5 şəkil əlavə edə bilərsiniz.");
+                    return;
+                  }
+            
+                  setImageFiles(prev => [...prev, ...imageFilesOnly]);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg
                             className="w-12 h-12 mb-4 text-gray-400"
-                            fill="none"
+                    fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                               strokeWidth={2}
                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
+                    />
+                  </svg>
                           <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
-                          </p>
+                    <span className="font-semibold">Click to upload</span> or drag and drop
+                  </p>
                           <p className="text-xs text-gray-500">
                             PNG, JPG, GIF up to 10MB (Max 5 images)
-                          </p>
-                        </div>
-                        <input
-                          id="dropzone-file"
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handleImageChange}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                  )}
+                  </p>
+                </div>
+                <input
+                  id="dropzone-file"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          )}
 
                   {imageFiles.length > 0 && (
                     <div className="flex gap-3 flex-wrap mt-4">
-                      {imageFiles.map((file, index) => (
+            {imageFiles.map((file, index) => (
                         <div key={index} className="relative group">
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt="Selected"
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Selected"
                             className="w-24 h-24 object-cover rounded-lg shadow-md"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
                             className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm hover:bg-red-600 transition-colors"
-                          >
+                >
                             ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                </button>
+              </div>
+            ))}
+          </div>
                   )}
-                </div>
+        </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">{t("detailsvideo")}</label>
 
-                  {!videoFile && (
-                    <div className="flex items-center justify-center w-full">
-                      <label
-                        htmlFor="video-dropzone"
+          {!videoFile && (
+            <div className="flex items-center justify-center w-full">
+              <label
+                htmlFor="video-dropzone"
                         className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          const file = e.dataTransfer.files[0];
-                          if (file && file.type.startsWith("video/")) {
-                            setVideoFile(file);
-                          } else {
-                            alert("Zəhmət olmasa video faylı atın.");
-                          }
-                        }}
-                        onDragOver={(e) => e.preventDefault()}
-                      >
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <svg
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files[0];
+                  if (file && file.type.startsWith("video/")) {
+                    setVideoFile(file);
+                  } else {
+                    alert("Zəhmət olmasa video faylı atın.");
+                  }
+                }}
+                onDragOver={(e) => e.preventDefault()}
+              >
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg
                             className="w-12 h-12 mb-4 text-gray-400"
-                            fill="none"
+                    fill="none"
                             stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                               strokeWidth={2}
                               d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-6 0a6 6 0 110-12 6 6 0 010 12zm0 0v5m0 0H8m2 0h2"
-                            />
-                          </svg>
+                    />
+                  </svg>
                           <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
-                          </p>
+                    <span className="font-semibold">Click to upload</span> or drag and drop
+                  </p>
                           <p className="text-xs text-gray-500">
-                            MP4, MOV, AVI formats (Max 100MB)
-                          </p>
-                        </div>
-                        <input
-                          id="video-dropzone"
-                          type="file"
-                          accept="video/*"
-                          onChange={handleVideoChange}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                  )}
-
-                  {videoFile && (
-                    <div className="relative mt-4">
-                      <video
-                        controls
-                        className="w-full h-64 rounded-xl object-cover shadow-lg"
-                        src={URL.createObjectURL(videoFile)}
-                      ></video>
-                      <button
-                        type="button"
-                        onClick={removeVideo}
-                        className="absolute top-3 right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  )}
+                    MP4, MOV, AVI formats (Max 100MB)
+                  </p>
                 </div>
+                <input
+                  id="video-dropzone"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          )}
 
-                <button
-                  type="submit"
+          {videoFile && (
+            <div className="relative mt-4">
+              <video
+                controls
+                        className="w-full h-64 rounded-xl object-cover shadow-lg"
+                src={URL.createObjectURL(videoFile)}
+              ></video>
+              <button
+                type="button"
+                onClick={removeVideo}
+                        className="absolute top-3 right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+              >
+                        ×
+              </button>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="submit"
                   className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  disabled={uploading}
+                  disabled={uploading || validating}
                 >
-                  {uploading ? (
+                  {validating ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Validating content...
+                    </>
+                  ) : uploading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       {t("detailsuploading")}
                     </>
                   ) : (
                     <>
-                      {t("detailssaveAd")}
+                      🚴 {t("detailssaveAd")}
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                       </svg>
                     </>
                   )}
-                </button>
-              </form>
+        </button>
+      </form>
             </div>
           </div>
         </div>

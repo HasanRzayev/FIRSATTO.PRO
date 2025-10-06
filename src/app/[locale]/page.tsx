@@ -157,17 +157,17 @@ export default function HomePage() {
         <div className="relative section-padding">
           <div className="container-max text-center">
             <h1 className="mb-6 text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-              {t('title')}
+              🚴 FIRSATTO
             </h1>
             <p className="mb-8 text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
-              {t('homepage_description')}
+              The Ultimate Bicycle Marketplace - Buy, Sell & Trade Bikes Worldwide
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a
                 href="/ads"
                 className="btn-primary inline-flex items-center gap-2"
               >
-                {t('List an Ad')}
+                🚴 {t('List an Ad')}
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -202,7 +202,7 @@ export default function HomePage() {
       <section className="section-padding bg-white/50 backdrop-blur-sm">
         <div className="container-max">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-            {t('All Announcements')}
+            🚴 All Bicycles
           </h2>
           {/* 🔍 Search and Filters */}
           <div className="glass-effect rounded-2xl p-8 mb-12 shadow-xl">
