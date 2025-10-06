@@ -51,52 +51,89 @@ export default function HomePage() {
   const fetchAds = async (reset = false) => {
     setLoading(true);
 
-    let query = supabase
-      .from("user_ads")
-      .select(`
-        *, 
-        user_profiles (
-          full_name,
-          id
-        )
-      `)
-      .order("created_at", { ascending: false });
+    try {
+      let query = supabase
+        .from("user_ads")
+        .select(`
+          *, 
+          user_profiles (
+            full_name,
+            id
+          )
+        `)
+        .order("created_at", { ascending: false });
 
-    if (searchTerm.trim()) {
-      query = query.or(
-        `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`
-      );
-    }
-
-    if (selectedCountry) {
-      query = query.eq("location", selectedCountry);
-    }
-
-    if (selectedCategory) {
-      query = query.eq("category", selectedCategory);
-    }
-
-    if (minPrice) {
-      query = query.gte("price", Number(minPrice));
-    }
-
-    if (maxPrice) {
-      query = query.lte("price", Number(maxPrice));
-    }
-
-    const { data, error } = await query.range((page - 1) * 10, page * 10 - 1);
-
-    console.log("Fetched Ads Data:", data);
-
-    if (error) {
-      console.error("Error loading ads:", error.message);
-    } else {
-      if (reset) {
-        setAds(data || []);
-      } else {
-        setAds((prev) => [...prev, ...(data || [])]);
+      if (searchTerm.trim()) {
+        query = query.or(
+          `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`
+        );
       }
-      setHasMore((data?.length || 0) === 10);
+
+      if (selectedCountry) {
+        query = query.eq("location", selectedCountry);
+      }
+
+      if (selectedCategory) {
+        query = query.eq("category", selectedCategory);
+      }
+
+      if (minPrice) {
+        query = query.gte("price", Number(minPrice));
+      }
+
+      if (maxPrice) {
+        query = query.lte("price", Number(maxPrice));
+      }
+
+      const { data, error } = await query.range((page - 1) * 10, page * 10 - 1);
+
+      if (error) {
+        console.error("Supabase Error:", error.message);
+        // Mock data for development when Supabase is not configured
+        const mockData = [
+          {
+            id: "1",
+            title: "Sample Ad 1",
+            description: "This is a sample ad for demonstration purposes.",
+            category: "electronics",
+            image_urls: ["https://via.placeholder.com/400x300"],
+            location: "Baku, Azerbaijan",
+            price: 100,
+            user_profiles: { full_name: "John Doe", id: "1" }
+          },
+          {
+            id: "2", 
+            title: "Sample Ad 2",
+            description: "Another sample ad to show the interface.",
+            category: "furniture",
+            image_urls: ["https://via.placeholder.com/400x300"],
+            location: "Istanbul, Turkey",
+            price: 250,
+            user_profiles: { full_name: "Jane Smith", id: "2" }
+          }
+        ];
+        
+        if (reset) {
+          setAds(mockData);
+        } else {
+          setAds((prev) => [...prev, ...mockData]);
+        }
+        setHasMore(false);
+      } else {
+        if (reset) {
+          setAds(data || []);
+        } else {
+          setAds((prev) => [...prev, ...(data || [])]);
+        }
+        setHasMore((data?.length || 0) === 10);
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+      // Show empty state on network errors
+      if (reset) {
+        setAds([]);
+      }
+      setHasMore(false);
     }
 
     setLoading(false);
@@ -113,140 +150,193 @@ export default function HomePage() {
   }, [page]);
 
   return (
-    <div className="px-4 py-8 max-w-screen-xl mx-auto bg-[#F5F5F5]">
-      <section className="bg-center bg-no-repeat bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/conference.jpg')] bg-gray-700 bg-blend-multiply">
-        <div className="px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
-          <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">
-            {t('title')}
-          </h1>
-          <p className="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48">
-            {t('homepage_description')}
-          </p>
-          <div className="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
-            <a
-              href="/ads"
-              className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
-            >
-              {t('List an Ad')}
-              <svg
-                className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 10"
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative section-padding">
+          <div className="container-max text-center">
+            <h1 className="mb-6 text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              {t('title')}
+            </h1>
+            <p className="mb-8 text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+              {t('homepage_description')}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <a
+                href="/ads"
+                className="btn-primary inline-flex items-center gap-2"
               >
-                <path
+                {t('List an Ad')}
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
                   stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M1 5h12m0 0L9 1m4 4L9 9"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </a>
+              <a
+                href="/about"
+                className="btn-secondary inline-flex items-center"
+              >
+                {t('Learn More')}
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-300/20 rounded-full blur-2xl"></div>
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300/20 rounded-full blur-lg"></div>
+      </section>
+
+      {/* Search and Filter Section */}
+      <section className="section-padding bg-white/50 backdrop-blur-sm">
+        <div className="container-max">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            {t('All Announcements')}
+          </h2>
+          {/* 🔍 Search and Filters */}
+          <div className="glass-effect rounded-2xl p-8 mb-12 shadow-xl">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              {/* Search */}
+              <div className="col-span-1 md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('keywords')}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('keywords')}
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setPage(1);
+                  }}
+                  className="input-field"
                 />
-              </svg>
-            </a>
-            <a
-              href="/about"
-              className="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400"
-            >
-              {t('Learn More')}
-            </a>
+              </div>
+
+              {/* Country selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('country')}
+                </label>
+                <select
+                  value={selectedCountry}
+                  onChange={(e) => {
+                    setSelectedCountry(e.target.value);
+                    setPage(1);
+                  }}
+                  className="input-field"
+                >
+                  <option value="">{t('country')}</option>
+                  {countriesWithCities.map(({ country, city }, index) => (
+                    <option key={index} value={`${country}, ${city}`}>
+                      {country}, {city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Category selection */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('catagory')}
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => {
+                    setSelectedCategory(e.target.value);
+                    setPage(1);
+                  }}
+                  className="input-field"
+                >
+                  <option value="">{t('catagory')}</option>
+                  {categories?.map((cat) => (
+                    <option key={cat.name} value={cat.slug}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price range */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Price Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder={t('minimum')}
+                    value={minPrice}
+                    onChange={(e) => {
+                      setMinPrice(e.target.value);
+                      setPage(1);
+                    }}
+                    className="w-full input-field"
+                  />
+                  <input
+                    type="number"
+                    placeholder={t('maximum')}
+                    value={maxPrice}
+                    onChange={(e) => {
+                      setMaxPrice(e.target.value);
+                      setPage(1);
+                    }}
+                    className="w-full input-field"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <h1 className="text-4xl font-extrabold mb-6 text-center text-[#2F4F4F]">
-        {t('All Announcements')}
-      </h1>
-{/* 🔍 Search and Filters */}
-<div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-10 max-w-5xl mx-auto bg-white p-4 rounded-lg shadow-md">
-  {/* Axtarış */}
-  <input
-    type="text"
-    placeholder={t('keywords')}
-    value={searchTerm}
-    onChange={(e) => {
-      setSearchTerm(e.target.value);
-      setPage(1);
-    }}
-    className="col-span-1 md:col-span-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-400 text-black placeholder-black"
-  />
-
-  {/* Ölkə seçimi */}
-  <select
-    value={selectedCountry}
-    onChange={(e) => {
-      setSelectedCountry(e.target.value);
-      setPage(1);
-    }}
-    className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-black"
-  >
-    <option value="">{t('country')}</option>
-    {countriesWithCities.map(({ country, city }, index) => (
-      <option key={index} value={`${country}, ${city}`}>
-        {country}, {city}
-      </option>
-    ))}
-  </select>
-
-  {/* Kategoriya seçimi */}
-  <select
-    value={selectedCategory}
-    onChange={(e) => {
-      setSelectedCategory(e.target.value);
-      setPage(1);
-    }}
-    className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-black"
-  >
-    <option value="">{t('catagory')}</option>
-    {categories?.map((cat) => (
-      <option key={cat.name} value={cat.slug}>
-        {cat.name}
-      </option>
-    ))}
-  </select>
-
-  {/* Qiymət aralığı */}
-  <div className="flex gap-2">
-    <input
-      type="number"
-      placeholder={`${t('minimum')}`}
-      value={minPrice}
-      onChange={(e) => {
-        setMinPrice(e.target.value);
-        setPage(1);
-      }}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black placeholder-black"
-    />
-    <input
-      type="number"
-      placeholder={`${t('maximum')}`}
-      value={maxPrice}
-      onChange={(e) => {
-        setMaxPrice(e.target.value);
-        setPage(1);
-      }}
-      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-black placeholder-black"
-    />
-  </div>
-</div>
-
-      {/* 📦 Cards */}
-      {ads.length === 0 && !loading ? (
-        <p className="text-center text-gray-500">{t('matching')}</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
-          {ads.map((ad, index) => {
-            const isLast = ads.length === index + 1;
-            return (
-              <div key={ad.id} ref={isLast ? lastAdRef : null}>
-                <Card ad={ad} />
+      {/* 📦 Cards Section */}
+      <section className="section-padding">
+        <div className="container-max">
+          {ads.length === 0 && !loading ? (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
               </div>
-            );
-          })}
-        </div>
-      )}
+              <h3 className="text-2xl font-semibold text-gray-600 mb-2">No Results Found</h3>
+              <p className="text-gray-500">{t('matching')}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {ads.map((ad, index) => {
+                const isLast = ads.length === index + 1;
+                return (
+                  <div key={ad.id} ref={isLast ? lastAdRef : null} className="card-hover">
+                    <Card ad={ad} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-      {loading && <p className="text-center mt-4 text-blue-500">{t('loading')}</p>}
+          {loading && (
+            <div className="text-center py-8">
+              <div className="inline-flex items-center gap-3">
+                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-blue-600 font-medium">{t('loading')}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

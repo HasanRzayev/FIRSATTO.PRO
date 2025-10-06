@@ -80,131 +80,168 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">
-        {t("profilprofile")}
-      </h1>
-      {profile && (
-        <div className="mb-10 flex flex-col items-center text-center sm:flex-row sm:text-left sm:items-start sm:gap-10">
-          {/* Profil şəkli */}
-          <div className="shrink-0">
-            <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-300 shadow-md">
-              {profile.profile_picture ? (
-                <img
-                  src={profile.profile_picture}
-                  alt={t("profilprofilepicture")}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-2xl">
-                  {t("profilnoimage")}
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative section-padding">
+          <div className="container-max text-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+              {t("profilprofile")}
+            </h1>
+            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+              Manage your profile and listings
+            </p>
+          </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-300/20 rounded-full blur-2xl"></div>
+      </section>
+
+      {/* Profile Info Section */}
+      <section className="section-padding bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container-max">
+          {profile && (
+            <div className="glass-effect rounded-2xl p-8 shadow-xl mb-12">
+              <div className="flex flex-col items-center text-center lg:flex-row lg:text-left lg:items-start lg:gap-10">
+                {/* Profile Picture */}
+                <div className="shrink-0 mb-6 lg:mb-0">
+                  <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                    {profile.profile_picture ? (
+                      <img
+                        src={profile.profile_picture}
+                        alt={t("profilprofilepicture")}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white text-3xl font-bold">
+                        {(profile.full_name || 'U')[0].toUpperCase()}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
 
-          {/* İstifadəçi məlumatları */}
-          <div className="mt-6 sm:mt-0 space-y-2">
-            <h2 className="text-2xl font-bold text-gray-800">{profile.full_name}</h2>
-            <p className="text-gray-600 text-base">
-              <strong>{t("profilname")}:</strong> {profile.full_name}
-            </p>
-            <p className="text-gray-600 text-base">
-              <strong>{t("profilbio")}:</strong> {profile.bio || t("profilnone")}
-            </p>
-            <p className="text-gray-600 text-base">
-              <strong>{t("profillocation")}:</strong> {profile.location || t("profilnone")}
-            </p>
-            <p className="text-gray-600 text-base">
-              <strong>{t("profilbirthdate")}:</strong> {profile.birth_date || t("profilnone")}
-            </p>
-            <p className="text-gray-600 text-base">
-              <strong>{t("profilcreatedat")}:</strong>{" "}
-              {new Date(profile.created_at).toLocaleString()}
-            </p>
-          </div>
-        </div>
-      )}
-
-      <hr className="my-6 border-gray-300" />
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-        {t("profilyourads")}
-      </h2>
-
-      {userAds.length === 0 ? (
-        <p className="text-gray-500">{t("profilnoads")}</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userAds.map((ad) => (
-            <div
-              key={ad.id}
-              className="relative group overflow-hidden rounded-lg shadow-md"
-              onClick={() => {
-                router.push(`/details/${ad.id}`);
-              }}
-            >
-              {/* Hover zamanı görünən blur qat */}
-              <div className="absolute inset-0 bg-white/30 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-300 z-10 pointer-events-none" />
-
-              {/* Edit və Delete düymələri */}
-              <div className="absolute inset-0 z-20 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-auto">
-                {/* Silmək düyməsi */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    handleDeleteAd(ad.id);
-                  }}
-                  className="bg-red-600 text-white text-sm px-4 py-2 rounded-md hover:bg-red-700"
-                >
-                  <img
-                    src="https://img.icons8.com/ios-filled/50/ffffff/delete.png"
-                    alt={t("profildelete")}
-                    className="w-5 h-5"
-                  />
-                </button>
-
-                {/* Redaktə etmə düyməsi */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    setEditingAd(ad);
-                  }}
-                  className="bg-blue-600 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  <img
-                    src="https://img.icons8.com/ios-filled/50/ffffff/pencil.png"
-                    alt={t("profiledit")}
-                    className="w-5 h-5"
-                  />
-                </button>
+                {/* User Information */}
+                <div className="flex-1 space-y-4">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                    {profile.full_name}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-white/50 rounded-lg">
+                      <p className="text-sm font-semibold text-gray-600 mb-1">{t("profilname")}</p>
+                      <p className="text-gray-800">{profile.full_name}</p>
+                    </div>
+                    <div className="p-4 bg-white/50 rounded-lg">
+                      <p className="text-sm font-semibold text-gray-600 mb-1">{t("profilbio")}</p>
+                      <p className="text-gray-800">{profile.bio || t("profilnone")}</p>
+                    </div>
+                    <div className="p-4 bg-white/50 rounded-lg">
+                      <p className="text-sm font-semibold text-gray-600 mb-1">{t("profillocation")}</p>
+                      <p className="text-gray-800">{profile.location || t("profilnone")}</p>
+                    </div>
+                    <div className="p-4 bg-white/50 rounded-lg">
+                      <p className="text-sm font-semibold text-gray-600 mb-1">{t("profilbirthdate")}</p>
+                      <p className="text-gray-800">{profile.birth_date || t("profilnone")}</p>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-white/50 rounded-lg">
+                    <p className="text-sm font-semibold text-gray-600 mb-1">{t("profilcreatedat")}</p>
+                    <p className="text-gray-800">{new Date(profile.created_at).toLocaleString()}</p>
+                  </div>
+                </div>
               </div>
-
-              {/* Card komponenti */}
-              <Card
-                ad={{
-                  ...ad,
-                  user: {
-                    id: user.id,
-                    userName: profile?.user_name || t("profilnone"),
-                  },
-                  user_profiles: {
-                    full_name: profile?.full_name || "",
-                  },
-                }}
-              />
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {/* Edit modalı */}
-      {editingAd && (
-        <EditModal
-          ad={editingAd}
-          onSave={handleSaveEdit}
-          onClose={() => setEditingAd(null)}
-        />
-      )}
+          <h2 className="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-12">
+            {t("profilyourads")}
+          </h2>
+
+          {userAds.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-semibold text-gray-600 mb-2">No Ads Yet</h3>
+              <p className="text-gray-500 mb-6">{t("profilnoads")}</p>
+              <a href="/ads" className="btn-primary inline-flex items-center gap-2">
+                Create Your First Ad
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </a>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {userAds.map((ad) => (
+                <div
+                  key={ad.id}
+                  className="relative group overflow-hidden rounded-2xl shadow-lg card-hover"
+                  onClick={() => {
+                    router.push(`/details/${ad.id}`);
+                  }}
+                >
+                  {/* Hover overlay with action buttons */}
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-300 z-10 flex items-center justify-center gap-4">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); 
+                        handleDeleteAd(ad.id);
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg transition-colors"
+                      title={t("profildelete")}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); 
+                        setEditingAd(ad);
+                      }}
+                      className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-colors"
+                      title={t("profiledit")}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Card component */}
+                  <Card
+                    ad={{
+                      ...ad,
+                      user: {
+                        id: user.id,
+                        userName: profile?.user_name || t("profilnone"),
+                      },
+                      user_profiles: {
+                        full_name: profile?.full_name || "",
+                      },
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Edit modal */}
+          {editingAd && (
+            <EditModal
+              ad={editingAd}
+              onSave={handleSaveEdit}
+              onClose={() => setEditingAd(null)}
+            />
+          )}
+        </div>
+      </section>
     </div>
   );
 }

@@ -131,104 +131,169 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">{t("settingssettings")}</h1>
-
-      {profile && (
-        <div>
-          <div className="mb-6">
-            <label className="block text-lg font-medium">{t("settingsfullName")}</label>
-            <input
-              type="text"
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={profile.full_name || ""}
-              onChange={(e) =>
-                setProfile((prev) => prev ? { ...prev, full_name: e.target.value } : prev) // Proper type handling here
-              }
-            />
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative section-padding">
+          <div className="container-max text-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+              {t("settingssettings")}
+            </h1>
+            <p className="text-xl md:text-2xl text-indigo-100 max-w-3xl mx-auto leading-relaxed">
+              Customize your profile and preferences
+            </p>
           </div>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 right-10 w-24 h-24 bg-purple-300/20 rounded-full blur-xl"></div>
+      </section>
 
-          <div className="mb-6">
-            <label className="block text-lg font-medium">{t("settingsusername")}</label>
-            <input
-              type="text"
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={profile.username || ""}
-              onChange={(e) =>
-                setProfile((prev) => prev ? { ...prev, username: e.target.value } : prev) // Proper type handling here
-              }
-            />
-          </div>
+      {/* Settings Form Section */}
+      <section className="section-padding bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container-max">
+          <div className="max-w-4xl mx-auto">
+            {profile && (
+              <div className="glass-effect rounded-2xl p-8 shadow-xl">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Left Column - Basic Info */}
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Basic Information</h3>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">{t("settingsfullName")}</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={profile.full_name || ""}
+                        onChange={(e) =>
+                          setProfile((prev) => prev ? { ...prev, full_name: e.target.value } : prev)
+                        }
+                      />
+                    </div>
 
-          <div className="mb-6">
-            <label className="block text-lg font-medium">{t("settingsbio")}</label>
-            <textarea
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={profile.bio || ""}
-              onChange={(e) =>
-                setProfile((prev) => prev ? { ...prev, bio: e.target.value } : prev) // Proper type handling here
-              }
-            />
-          </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">{t("settingsusername")}</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={profile.username || ""}
+                        onChange={(e) =>
+                          setProfile((prev) => prev ? { ...prev, username: e.target.value } : prev)
+                        }
+                      />
+                    </div>
 
-          <div className="mb-6">
-            <label className="block text-lg font-medium">{t("settingslocation")}</label>
-            <input
-              type="text"
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={profile.location || ""}
-              onChange={(e) =>
-                setProfile((prev) => prev ? { ...prev, location: e.target.value } : prev) // Proper type handling here
-              }
-            />
-          </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">{t("settingsbio")}</label>
+                      <textarea
+                        className="input-field resize-none"
+                        rows={4}
+                        value={profile.bio || ""}
+                        onChange={(e) =>
+                          setProfile((prev) => prev ? { ...prev, bio: e.target.value } : prev)
+                        }
+                      />
+                    </div>
+                  </div>
 
-          <div className="mb-6">
-            <label className="block text-lg font-medium">{t("settingsbirthDate")}</label>
-            <input
-              type="date"
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={profile.birth_date || ""}
-              onChange={(e) =>
-                setProfile((prev) => prev ? { ...prev, birth_date: e.target.value } : prev) // Proper type handling here
-              }
-            />
-          </div>
+                  {/* Right Column - Additional Info */}
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Additional Details</h3>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">{t("settingslocation")}</label>
+                      <input
+                        type="text"
+                        className="input-field"
+                        value={profile.location || ""}
+                        onChange={(e) =>
+                          setProfile((prev) => prev ? { ...prev, location: e.target.value } : prev)
+                        }
+                      />
+                    </div>
 
-          <div className="mb-6">
-            <label className="block text-lg font-medium">{t("settingsprofilePicture")}</label>
-            {profilePicture && (
-              <div className="mb-4">
-                <Image
-                  src={profilePicture}
-                  alt="Profile Picture"
-                  width={100}
-                  height={100}
-                  className="rounded-full"
-                />
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">{t("settingsbirthDate")}</label>
+                      <input
+                        type="date"
+                        className="input-field"
+                        value={profile.birth_date || ""}
+                        onChange={(e) =>
+                          setProfile((prev) => prev ? { ...prev, birth_date: e.target.value } : prev)
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">{t("settingsprofilePicture")}</label>
+                      {profilePicture && (
+                        <div className="mb-4">
+                          <Image
+                            src={profilePicture}
+                            alt="Profile Picture"
+                            width={120}
+                            height={120}
+                            className="rounded-full shadow-lg border-4 border-white"
+                          />
+                        </div>
+                      )}
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="input-field"
+                        />
+                        <div className="text-sm text-gray-500">
+                          <p>Recommended: 400x400px</p>
+                          <p>Max size: 5MB</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <button
+                    onClick={handleSave}
+                    className="btn-primary w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        {t("settingssaving")}
+                      </>
+                    ) : (
+                      <>
+                        {t("settingssaveChanges")}
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="p-2 border border-gray-300 rounded-md"
-            />
+
+            {isFirstTime && (
+              <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <p className="text-amber-800">{t("settingsfillInAllFields")}</p>
+                </div>
+              </div>
+            )}
           </div>
-
-          <button
-            onClick={handleSave}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            disabled={isLoading}
-          >
-            {isLoading ? t("settingssaving") : t("settingssaveChanges")}
-          </button>
         </div>
-      )}
-
-      {isFirstTime && (
-        <p className="text-red-600 mt-4">{t("settingsfillInAllFields")}</p>
-      )}
+      </section>
     </div>
   );
 }
