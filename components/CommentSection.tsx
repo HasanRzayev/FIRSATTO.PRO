@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { FaSmile } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 import { EmojiClickData } from "emoji-picker-react";
-import { usePathname } from "next/navigation";  // Import usePathname
+import { usePathname } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 const EmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
@@ -31,9 +32,32 @@ type CommentSectionProps = {
 const CommentSection = ({ adId, userId, comments, setComments }: CommentSectionProps) => {
   const [newComment, setNewComment] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
   const t = useTranslations();
-  const pathname = usePathname();  // Get the current pathname
-  const locale = pathname?.split('/')[1] || 'en';  // Extract the locale from the pathname, default to 'en'
+  const pathname = usePathname();
+  const locale = pathname?.split('/')[1] || 'en';
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('full_name, username')
+            .eq('id', user.id)
+            .single();
+          
+          setCurrentUserProfile(profile);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     setNewComment((prev) => prev + emojiData.emoji);
@@ -66,11 +90,11 @@ const CommentSection = ({ adId, userId, comments, setComments }: CommentSectionP
       setComments((prev) => [
         ...prev,
         {
-          id: result.commentId || "default-comment-id",  // Gelen id'yi ekleyin
+          id: result.commentId || "default-comment-id",
           content: newComment,
           timestamp: new Date().toISOString(),
           user: {
-            full_name: "Current User", // Kullanıcı adı burada dinamik olarak eklenebilir
+            full_name: currentUserProfile?.full_name || currentUserProfile?.username || "User",
           },
         },
       ]);
@@ -81,26 +105,32 @@ const CommentSection = ({ adId, userId, comments, setComments }: CommentSectionP
   };
 
   return (
-    <div className="w-full border rounded-lg p-3 shadow-sm bg-white">
-      <div className="flex items-end gap-2">
+    <div className="w-full glass-effect rounded-xl p-6 shadow-lg">
+      <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        Write a Comment
+      </h3>
+      <div className="flex items-end gap-3">
         <div className="relative flex-grow">
           <textarea
-            rows={1}
+            rows={3}
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder={t("writeCommentPlaceholder") || "Write a comment..."} // Translate or fallback to default placeholder
-            className="w-full resize-none border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-            aria-label={t("writeCommentPlaceholder") || "Write a comment..."} // Add ARIA label for accessibility
+            placeholder={t("writeCommentPlaceholder") || "Share your thoughts about this bicycle..."}
+            className="input-field resize-none"
+            aria-label={t("writeCommentPlaceholder") || "Write a comment..."}
           />
           <button
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="absolute right-2 bottom-2 text-xl text-gray-500 hover:text-blue-500 transition"
-            aria-label={t("emojiPickerButton") || "Open emoji picker"} // Add ARIA label for accessibility
+            className="absolute right-3 bottom-3 text-2xl text-gray-400 hover:text-blue-500 transition-colors"
+            aria-label={t("emojiPickerButton") || "Open emoji picker"}
           >
             <FaSmile />
           </button>
           {showEmojiPicker && (
-            <div className="absolute bottom-12 left-0 z-10">
+            <div className="absolute bottom-16 right-0 z-50">
               <EmojiPicker
                 onEmojiClick={handleEmojiClick}
                 height={350}
@@ -112,10 +142,14 @@ const CommentSection = ({ adId, userId, comments, setComments }: CommentSectionP
 
         <button
           onClick={handleCommentSubmit}
-          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 h-fit rounded-md transition"
-          aria-label={t("postComment") || "Post comment"} // Add ARIA label for accessibility
+          disabled={!newComment.trim()}
+          className="btn-primary h-fit disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          aria-label={t("postComment") || "Post comment"}
         >
           {t("postComment") || "Post"}
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
         </button>
       </div>
     </div>

@@ -132,17 +132,46 @@ const SavedAdsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {savedAds.map((ad) => (
-          <Card key={ad.id} ad={ad} />
-        ))}
-      </div>
-      {hasMore && (
-        <div ref={loaderRef} className="py-6 text-center text-gray-500">
-          {t('loadMore')}
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-800">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative section-padding">
+          <div className="container-max text-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+              💖 Saved Bicycles
+            </h1>
+            <p className="text-xl md:text-2xl text-purple-100 max-w-3xl mx-auto leading-relaxed">
+              Your favorite bikes in one place
+            </p>
+          </div>
         </div>
-      )}
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-pink-300/20 rounded-full blur-2xl"></div>
+      </section>
+
+      {/* Saved Ads Section */}
+      <section className="section-padding bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container-max">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {savedAds.map((ad) => (
+              <div key={ad.id} className="card-hover">
+                <Card ad={ad} />
+              </div>
+            ))}
+          </div>
+          {hasMore && (
+            <div ref={loaderRef} className="py-8 text-center">
+              <div className="inline-flex items-center gap-3">
+                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-blue-600 font-medium">{t('loadMore')}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

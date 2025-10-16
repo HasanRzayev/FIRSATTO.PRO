@@ -129,7 +129,7 @@ const Card: React.FC<CardProps> = ({ ad }) => {
         {/* Save button */}
         <button
           onClick={handleSaveClick}
-          className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition-all duration-200 shadow-lg hover:shadow-xl z-20"
         >
           <svg
             className={`w-5 h-5 transition-colors duration-200 ${
@@ -186,9 +186,9 @@ const Card: React.FC<CardProps> = ({ ad }) => {
         </div>
       </div>
 
-      {/* Hover overlay */}
+      {/* Hover overlay - with pointer-events-none to allow button clicks */}
       <div
-        className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5 transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5 transition-opacity duration-300 pointer-events-none ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}
       >

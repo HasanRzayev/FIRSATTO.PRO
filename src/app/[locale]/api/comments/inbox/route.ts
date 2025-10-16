@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error?.message || "User not found" }, { status: 401 });
   }
 
- 
+  // 1. Get user's own comments
   const { data: userComments, error: userCommentsError } = await supabase
     .from("comments")
     .select("id")
@@ -42,73 +42,95 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: userCommentsError.message }, { status: 500 });
   }
 
-  const userCommentIds = userComments.map(c => c.id);
-  if (userCommentIds.length === 0) return NextResponse.json([]);
+  // 2. Get user's own ads
+  const { data: userAds, error: userAdsError } = await supabase
+    .from("user_ads")
+    .select("id")
+    .eq("user_id", user.id);
 
- 
-  const { data: firstLevelReplies, error: firstLevelError } = await supabase
-    .from("comments")
-    .select(`
-      id, content, is_read, created_at,
-      user_profiles ( username, profile_picture ),
-      ad_id, parent_comment_id, user_id,
-      user_ads ( title ),
-      parent_comment:parent_comment_id (
-        user_id
-      )
-    `)
-    .in("parent_comment_id", userCommentIds);
-
-  if (firstLevelError) {
-    return NextResponse.json({ error: firstLevelError.message }, { status: 500 });
+  if (userAdsError) {
+    return NextResponse.json({ error: userAdsError.message }, { status: 500 });
   }
 
- 
-  firstLevelReplies.forEach(reply => {
-    if (reply.user_profiles && reply.user_profiles.length > 0) {
-      const firstProfile = reply.user_profiles[0];
-      reply.user_profiles = [firstProfile];
-    }
-  });
+  const userCommentIds = userComments?.map(c => c.id) || [];
+  const userAdIds = userAds?.map(a => a.id) || [];
 
-  const firstLevelReplyIds = firstLevelReplies.map(r => r.id);
+  if (userCommentIds.length === 0 && userAdIds.length === 0) {
+    return NextResponse.json([]);
+  }
 
- 
-  let secondLevelReplies: Comment[] = [];
-  if (firstLevelReplyIds.length > 0) {
-    const { data: secondReplies, error: secondLevelError } = await supabase
+  // 3. Get replies to user's comments
+  let firstLevelReplies: any[] = [];
+  
+  if (userCommentIds.length > 0) {
+    const { data: replies, error: repliesError } = await supabase
       .from("comments")
       .select(`
         id, content, is_read, created_at,
-        user_profiles ( username, profile_picture ),
+        user_profiles ( full_name, username, profile_picture ),
         ad_id, parent_comment_id, user_id,
         user_ads ( title ),
         parent_comment:parent_comment_id (
           user_id
         )
       `)
-      .in("parent_comment_id", firstLevelReplyIds);
+      .in("parent_comment_id", userCommentIds);
 
-    if (secondLevelError) {
-      return NextResponse.json({ error: secondLevelError.message }, { status: 500 });
+    if (repliesError) {
+      return NextResponse.json({ error: repliesError.message }, { status: 500 });
     }
-
- 
-    secondReplies.forEach(reply => {
-      if (reply.user_profiles && reply.user_profiles.length > 0) {
-        const firstProfile = reply.user_profiles[0];
-        reply.user_profiles = [firstProfile];
-      }
-    });
-
-    secondLevelReplies = secondReplies;
+    
+    firstLevelReplies = replies || [];
   }
 
- 
-  const allReplies = [...firstLevelReplies, ...secondLevelReplies];
-  allReplies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  // 4. Get comments on user's ads
+  let commentsOnUserAds: any[] = [];
+  
+  if (userAdIds.length > 0) {
+    const { data: adComments, error: adCommentsError } = await supabase
+      .from("comments")
+      .select(`
+        id, content, is_read, created_at,
+        user_profiles ( full_name, username, profile_picture ),
+        ad_id, parent_comment_id, user_id,
+        user_ads ( title ),
+        parent_comment:parent_comment_id (
+          user_id
+        )
+      `)
+      .in("ad_id", userAdIds)
+      .is("parent_comment_id", null)
+      .neq("user_id", user.id);
 
-  return NextResponse.json(allReplies);
+    if (adCommentsError) {
+      return NextResponse.json({ error: adCommentsError.message }, { status: 500 });
+    }
+    
+    commentsOnUserAds = adComments || [];
+  }
+
+  // Combine all notifications
+  const allNotifications = [...firstLevelReplies, ...commentsOnUserAds];
+
+  // Clean up user_profiles structure
+  allNotifications.forEach(notification => {
+    if (notification.user_profiles && notification.user_profiles.length > 0) {
+      const firstProfile = notification.user_profiles[0];
+      notification.user_profiles = firstProfile;
+    }
+    
+    if (notification.user_ads && notification.user_ads.length > 0) {
+      const firstAd = notification.user_ads[0];
+      notification.user_ads = firstAd;
+    }
+  });
+
+  // Sort by most recent
+  allNotifications.sort((a, b) => 
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
+  return NextResponse.json(allNotifications);
 }
 
 export async function PATCH(req: Request) {
