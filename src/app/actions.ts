@@ -3,10 +3,12 @@
 import { redirect } from "next/navigation";
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
+import connectToDatabase from "../lib/mongoose";
+import User from "../models/User";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
 
- 
+
 const getLocale = (referer?: string): string => {
   const pathname = referer?.split('/') || [];
   return pathname[3] || 'en';
@@ -45,17 +47,23 @@ export const signUpAction = async (formData: FormData) => {
 
   const user = data?.user;
   if (user && user.id) {
-    const { error: profileError } = await supabase.from("user_profiles").insert([
-      {
-        id: user.id,
+    try {
+      await connectToDatabase();
+
+      // Create user profile in MongoDB using Mongoose
+      // We use the Supabase Auth ID as the _id for the MongoDB document to link them
+      await User.create({
+        _id: user.id,
         full_name: fullName,
         is_expert: false,
-      },
-    ]);
+        profile_picture: "", // Default empty or placeholder
+      });
 
-    if (profileError) {
-      console.error("Profile creation error: ", profileError.message);
-      return encodedRedirect("error", `${BASE_URL}/${locale}/sign-up`, "Error while creating profile.");
+    } catch (dbError: any) {
+      console.error("MongoDB Profile creation error: ", dbError.message);
+      // Optional: You might want to delete the Supabase Auth user if DB creation fails to keep consistency
+      // await supabase.auth.admin.deleteUser(user.id); 
+      return encodedRedirect("error", `${BASE_URL}/${locale}/sign-up`, "Error while creating profile in database.");
     }
   } else {
     console.error("User object or user id is missing.");

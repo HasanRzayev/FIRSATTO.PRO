@@ -5,7 +5,7 @@ import HeaderAuth from "@/components/header-auth";
 import Link from "next/link";
 import SaveIconButton from "@/components/SaveIconButton";
 import UnreadReplyCount from "@/components/UnreadReplyCount";
-import { LocaleSwitcher } from "@/components/LocaleSwitcher"; // Fixed import name
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import Navigation from "@/components/Navigation";
 import { dir } from "i18next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -17,11 +17,12 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Firsatto',
-  description: 'Firsatto',
+  description: 'Firsatto - The Ultimate Bicycle Marketplace',
   verification: {
     google: 'sxvnxLsm1HWt9Tt2BY0wDTE21XrGVpXzZJ7PDurB660'
   }
 }
+
 export default async function LocaleLayout({
   children,
   params,
@@ -29,7 +30,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params; // Removed await since params is synchronous
+  const { locale } = params;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
@@ -42,67 +43,114 @@ export default async function LocaleLayout({
       <head>
         <ThemeModeScript />
       </head>
-      <body className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen text-foreground">
+      <body className="bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-white selection:bg-indigo-500 selection:text-white">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <header className="w-full glass-effect border-b border-white/20 h-20 sticky top-0 z-50 shadow-lg">
-            <div className="container-max flex justify-between items-center px-6 h-full">
-              <Link href={`/${locale}`} className="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                🚴 FIRSATTO
+
+          {/* Sticky Premium Header */}
+          <header className="fixed w-full top-0 z-50 glass-effect border-b border-white/20 dark:border-slate-800 transition-all duration-300">
+            <div className="container-max flex justify-between items-center px-4 sm:px-6 h-20">
+              <Link href={`/${locale}`} className="flex items-center gap-2 group">
+                <span className="text-3xl animate-bounce">🚴</span>
+                <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent group-hover:to-purple-600 transition-all duration-300">
+                  FIRSATTO
+                </span>
               </Link>
-              <Navigation locale={locale} />
-              <div className="flex items-center gap-3">
+
+              {/* Desktop Nav */}
+              <div className="hidden lg:block">
+                <Navigation locale={locale} />
+              </div>
+
+              {/* Actions & Mobile Menu Toggle */}
+              <div className="flex items-center gap-3 sm:gap-4">
                 <UnreadReplyCount />
                 <SaveIconButton />
-                <LocaleSwitcher />
+                <div className="hidden sm:block">
+                  <LocaleSwitcher />
+                </div>
                 <HeaderAuth />
+
+                {/* Mobile Menu Button (Hamburger) - Navigation component handles the menu content, but we can expose a trigger here if needed, 
+                    or assume Navigation has the responsive logic. For now, we rely on Navigation's responsiveness. 
+                    If Navigation is not responsive, we should double check it next.
+                */}
               </div>
             </div>
           </header>
 
-          <main className="container-max px-6 py-8 min-h-screen">{children}</main>
+          {/* Main Content with padding for fixed header */}
+          <main className="container-max px-4 sm:px-6 py-8 pt-28 min-h-screen animate-fade-in">
+            {children}
+          </main>
 
-          <footer className="w-full bg-gradient-to-r from-slate-800 to-slate-900 text-white py-12 mt-16">
+          {/* Premium Footer */}
+          <footer className="w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8">
             <div className="container-max px-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <div className="col-span-1 md:col-span-2">
-                  <h3 className="font-bold text-2xl mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+
+                {/* Brand Column */}
+                <div className="col-span-1 md:col-span-2 space-y-4">
+                  <h3 className="font-extrabold text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     🚴 FIRSATTO
                   </h3>
-                  <p className="text-gray-300 mb-4">
-                    The ultimate bicycle marketplace. Buy, sell, and trade bikes worldwide. Connect with cycling enthusiasts and discover amazing bicycles.
+                  <p className="text-slate-600 dark:text-slate-400 max-w-sm leading-relaxed">
+                    The ultimate specific bicycle marketplace. Buy, sell, and trade bikes worldwide.
+                    Join our community of cycling enthusiasts today.
                   </p>
-                  <div className="flex space-x-4">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors cursor-pointer">
-                      <span className="text-white font-bold">f</span>
-                    </div>
-                    <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors cursor-pointer">
-                      <span className="text-white font-bold">t</span>
-                    </div>
-                    <div className="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors cursor-pointer">
-                      <span className="text-white font-bold">i</span>
-                    </div>
+                  <div className="flex space-x-4 pt-2">
+                    {['twitter', 'facebook', 'instagram'].map((social) => (
+                      <div key={social} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1">
+                        <span className="capitalize text-xs font-bold">{social[0]}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
+
+                {/* Quick Links */}
                 <div>
-                  <h4 className="font-semibold text-lg mb-4">Quick Links</h4>
-                  <ul className="space-y-2 text-gray-300">
-                    <li><Link href={`/${locale}`} className="hover:text-blue-400 transition-colors">Home</Link></li>
-                    <li><Link href={`/${locale}/about`} className="hover:text-blue-400 transition-colors">About</Link></li>
-                    <li><Link href={`/${locale}/ads`} className="hover:text-blue-400 transition-colors">Create Ad</Link></li>
-                    <li><Link href={`/${locale}/contact`} className="hover:text-blue-400 transition-colors">Contact</Link></li>
+                  <h4 className="font-bold text-lg mb-6 text-slate-800 dark:text-white">Quick Links</h4>
+                  <ul className="space-y-3">
+                    {['Home', 'About', 'Ads', 'Contact'].map((item) => (
+                      <li key={item}>
+                        <Link
+                          href={`/${locale}/${item.toLowerCase() === 'home' ? '' : item.toLowerCase()}`}
+                          className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                          {item}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
+
+                {/* Legal */}
                 <div>
-                  <h4 className="font-semibold text-lg mb-4">Legal</h4>
-                  <ul className="space-y-2 text-gray-300">
-                    <li><Link href={`/${locale}/privacy`} className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-                    <li><Link href={`/${locale}/terms`} className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
-                    <li><Link href={`/${locale}/contact`} className="hover:text-blue-400 transition-colors">Support</Link></li>
+                  <h4 className="font-bold text-lg mb-6 text-slate-800 dark:text-white">Legal</h4>
+                  <ul className="space-y-3">
+                    {['Privacy Policy', 'Terms of Service', 'Support'].map((item) => (
+                      <li key={item}>
+                        <Link
+                          href={`/${locale}/${item.toLowerCase().replace(/ /g, '-')}`}
+                          className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2 group"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                          {item}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
-              <div className="border-t border-gray-700 pt-8 text-center text-gray-400">
-                <p>&copy; {new Date().getFullYear()} FIRSATTO. All rights reserved. Made with ❤️ for global connections.</p>
+
+              {/* Bottom Footer */}
+              <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <p className="text-slate-500 dark:text-slate-500 text-sm">
+                  &copy; {new Date().getFullYear()} FIRSATTO. All rights reserved.
+                </p>
+                <p className="text-slate-500 dark:text-slate-500 text-sm flex items-center gap-1">
+                  Made with <span className="text-red-500 animate-pulse">❤️</span> for global connections
+                </p>
               </div>
             </div>
           </footer>
